@@ -127,10 +127,45 @@ function ss_func() {
 
 	//echo '<div>';
 	$ss_system = json_decode($ss->system, true);
+	$ss_display = json_decode($ss->display, true);
+	$ss_processor = json_decode($ss->processor, true);
+	$ss_memory = json_decode($ss->memory, true);
 	$ss_backcamera = json_decode($ss->backcamera, true);
+	$ss_frontcamera = json_decode($ss->frontcamera, true);
+	$ss_opengl11 = json_decode($ss->opengl11, true);
+	$ss_opengl1x = json_decode($ss->opengl1x, true);
+	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
 	
-	echo $ss->print_model($ss_system, 3, 9);
-	echo $ss->print_model($ss_backcamera, 4, 8);
+	echo "<pre>";
+	print_r($ss_backcamera);
+	if ($ss_system != "") {
+		echo $ss->print_model($ss_system, 3, 9)."<br />";
+	}
+	if ($ss_display != "") {
+		echo $ss->print_model($ss_display, 6, 6)."<br />";
+	}
+	if ($ss_processor != "") {
+		echo $ss->print_model($ss_processor, 3, 9)."<br />";
+	}
+	if ($ss_memory != "") {
+		echo $ss->print_model($ss_memory, 3, 9)."<br />";
+	}
+	if ($ss_backcamera != "") {
+		echo $ss->print_model($ss_backcamera, 4, 8)."<br />";
+	}
+	if ($ss_frontcamera != "") {
+		echo $ss->print_model($ss_frontcamera, 4, 8)."<br />";
+	}
+	if ($ss_opengl11 != "") {
+		echo $ss->print_model($ss_opengl11, 4, 8)."<br />";
+	}
+	if ($ss_opengl1x != "") {
+		echo $ss->print_model($ss_opengl1x, 4, 8)."<br />";
+	}
+	if ($ss_graphicmodes != "") {
+		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
+	}
+	
 }
 
 
@@ -142,7 +177,14 @@ class SS {
 	public $seo_keywords;
 	public $model;
 	public $system;
+	public $display;
+	public $processor;
+	public $memory;
 	public $backcamera;
+	public $frontcamera;
+	public $opengl11;
+	public $opengl1x;
+	public $graphicmodes;
 	
 	
 	
@@ -160,7 +202,14 @@ class SS {
 		$result = $wpdb->get_row($query, ARRAY_A);
 		$this->seo_title = $result['model'];
 		$this->system = $result['system'];
+		$this->display = $result['display'];
+		$this->processor = $result['processor'];
+		$this->memory = $result['memory'];
 		$this->backcamera = $result['backcamera'];
+		$this->frontcamera = $result['frontcamera'];
+		$this->opengl11 = $result['opengl11'];
+		$this->opengl1x = $result['opengl1x'];
+		$this->graphicmodes = $result['graphicmodes'];
 		
 		
 //		return $result;
@@ -182,27 +231,35 @@ class SS {
 	function print_model($arr_field, $col1, $col2) {
 		$checktitle = false;
 		if ($arr_field) {
-			$system = '<div class="row">';
+			$string = '<div class="row">';
 			foreach ($arr_field as $key => $value) {
-				if (($key == "title") || ($key == "subtitle")) {
-					if ($key == "title") {
-						$system .= '<div class="small-12 columns"><b>'.$value;
+				if ((substr($key,0,5) == "title") || (substr($key,0,8) == "subtitle")) {
+					if (substr($key,0,5) == "title") {
+						$string .= '<div class="small-12 columns"><b>'.$value;
 						$checktitle = true;
 					} else {
-						$system .= " (".$value.")</b></div>";
+						$string .= " (".$value.")</b></div>";
 						$checktitle = false;
 					}
+				}
+				elseif ((substr($key,0,7) == "content") || (is_int($key))) {
+					if ($checktitle) {	
+						$string .= "</b></div>";
+						$checktitle = false;
+					}
+					$string .= '<div class="small-12 columns">'.$value.'</div>';
 				} else {
 					if ($checktitle) {	
-						$system .= "</b></div>";
+						$string .= "</b></div>";
+						$checktitle = false;
 					}
-					$system .= '<div class="small-'.$col1.' columns">'.$key.'</div>';
-					$system .= '<div class="small-'.$col2.' columns">'.$value.'</div>';
+					$string .= '<div class="small-'.$col1.' columns">'.$key.'</div>';
+					$string .= '<div class="small-'.$col2.' columns">'.$value.'</div>';
 				}
 			}
-			$system .= '</div>';
+			$string .= '</div>';
 		}
-		return $system;
+		return $string;
 	}
 	
 	function flatten_array($arr) {
@@ -230,8 +287,11 @@ class SS {
 							$results[$storekey] = $value;
 							$storekey = "";
 						} else {
-							$results["content"] = $value;
+							$results[] = $value;
 						}
+					}
+					elseif (is_int($key)) {
+						$results[] = $value;
 					}
 				}
 				$results = array_merge($results, $this->flatten_array($value));
