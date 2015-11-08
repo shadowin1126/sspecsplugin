@@ -130,22 +130,10 @@ function ss_func() {
 	$ss_backcamera = json_decode($ss->backcamera, true);
 	//echo $ss->nested_list($ss_system);
 	//echo $ss->nested_list($ss_backcamera);
+	//echo "<br /><br />";
 	
-	print_r($ss_system);
-	echo "<br /><br />";
-	print_r($ss->searcharray($ss_system));
-	
-	/**
-	echo '<pre>';
-	print_r($ss_system);
-	echo '</pre>';
-
-	foreach ($ss_system[0] as $system) {
-		echo $system;
-	}
-	echo '</div>';
-	**/
-
+	echo "<pre>";
+	print_r($ss->flatten_array($ss_backcamera));
 
 }
 
@@ -222,64 +210,36 @@ class SS {
 		return $output;
 	}
 	
-	function flatten_array(array $array){
-		
-		$storekey = "";
-		foreach($array as $key => $value){
-			if(is_array($value)){
-				foreach ($value as $subarray) {
-            		$this->flatten_array($subarray);
-            	}
-			} else {
-				if ($key == "title") {
-					$output["title"] = $value;
-				}
-				elseif ($key == "subtitle") {
-					$output["subtitle"] = $value;
-				}
-				elseif ($key == "name") {
-					$storekey = $value;
-				}
-				elseif ($key == "content") {
-					if ($storekey != "") {
-						$output[$storekey] = $value;
-					} else {
-						$output["content"] = $value;
-					}
-					$storekey = "";
-				}
-			}
-		}
-		return $output;
-	}
-	
-	function searcharray($arr) {
+	function flatten_array($arr) {
 		if (!$results) {
 			$results = array();
 		}
 		if (is_array($arr)) {
 			$storekey = "";
 			foreach ($arr as $key => $value) {
-				if ($key == "title") {
-					$results["title"] = $value;
-				}
-				elseif ($key == "subtitle") {
-					$results["subtitle"] = $value;
-				}
-				elseif ($key == "name") {
-					$storekey = $value;
-				}
-				elseif ($key == "content") {
-					if (($storekey) && ($storekey != "")) {
-						$results[$storekey] = $value;
-						$storekey = "";
-					//	echo "storekey: $storekey<br />";
-					//	echo "value: $value<br />";
-					} else {
-						$results["content"] = $value;
+				// If value is an array, do not store value, e.g. array[content] = Array
+				if (!is_array($value)) {
+					if ($key == "title") {
+						$results["title"] = $value;
+					}
+					elseif ($key == "subtitle") {
+						$results["subtitle"] = $value;
+					}
+					// Use temp key to store value in order to merge later if array[name] and array[content] exist
+					elseif ($key == "name") {
+						$storekey = $value;
+					}
+					elseif ($key == "content") {
+						// Merge (array[name] = value) + (array[content] = value) to become array[name] = content
+						if (($storekey) && ($storekey != "")) {
+							$results[$storekey] = $value;
+							$storekey = "";
+						} else {
+							$results["content"] = $value;
+						}
 					}
 				}
-				$results = array_merge($results, $this->searcharray($value));
+				$results = array_merge($results, $this->flatten_array($value));
 			}
 		}
 		
@@ -287,6 +247,7 @@ class SS {
 		return $results;
 	}
 	
+	/**
 	function array_flatten_recursive($array) { 
 		if($array) { 
 			$flat = array(); 
@@ -298,7 +259,8 @@ class SS {
 		
 			return $flat; 
 		}
-	} 
+	}
+	**/
 }
 
 
