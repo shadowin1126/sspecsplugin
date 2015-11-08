@@ -128,13 +128,9 @@ function ss_func() {
 	//echo '<div>';
 	$ss_system = json_decode($ss->system, true);
 	$ss_backcamera = json_decode($ss->backcamera, true);
-	//echo $ss->nested_list($ss_system);
-	//echo $ss->nested_list($ss_backcamera);
-	//echo "<br /><br />";
 	
-	echo "<pre>";
-	print_r($ss->flatten_array($ss_backcamera));
-
+	echo $ss->print_model($ss_system, 3, 9);
+	echo $ss->print_model($ss_backcamera, 4, 8);
 }
 
 
@@ -182,32 +178,31 @@ class SS {
 		echo $this->model;
 	}
 	
-	function nested_list(array $array){
-		//$output = '<ul>';
-		foreach($array as $key => $value){
-			if(is_array($value)){
-				$output .= $this->nested_list($value);
-			}else{
+	// Function to display sql field that is an array
+	function print_model($arr_field, $col1, $col2) {
+		$checktitle = false;
+		if ($arr_field) {
+			$system = '<div class="row">';
+			foreach ($arr_field as $key => $value) {
 				if (($key == "title") || ($key == "subtitle")) {
-					$output .= '<b>';
 					if ($key == "title") {
-						$output .= "<br /><br />".$value;
+						$system .= '<div class="small-12 columns"><b>'.$value;
+						$checktitle = true;
 					} else {
-						$output .= " (".$value.")";
+						$system .= " (".$value.")</b></div>";
+						$checktitle = false;
 					}
-					$output .= '</b>';
-				}
-				elseif ($key == "name") {
-					$output .= "<br />".$value." : ";
-				}
-				elseif ($key == "content") {
-					$output .= $value;
+				} else {
+					if ($checktitle) {	
+						$system .= "</b></div>";
+					}
+					$system .= '<div class="small-'.$col1.' columns">'.$key.'</div>';
+					$system .= '<div class="small-'.$col2.' columns">'.$value.'</div>';
 				}
 			}
-			//$output .= '<br />';
+			$system .= '</div>';
 		}
-		//$output .= '</ul>';
-		return $output;
+		return $system;
 	}
 	
 	function flatten_array($arr) {
@@ -242,12 +237,36 @@ class SS {
 				$results = array_merge($results, $this->flatten_array($value));
 			}
 		}
-		
-
 		return $results;
 	}
-	
-	/**
+	/** List nested arrays and flatten array with recursive
+	function nested_list(array $array){
+		//$output = '<ul>';
+		foreach($array as $key => $value){
+			if(is_array($value)){
+				$output .= $this->nested_list($value);
+			}else{
+				if (($key == "title") || ($key == "subtitle")) {
+					$output .= '<b>';
+					if ($key == "title") {
+						$output .= "<br /><br />".$value;
+					} else {
+						$output .= " (".$value.")";
+					}
+					$output .= '</b>';
+				}
+				elseif ($key == "name") {
+					$output .= "<br />".$value." : ";
+				}
+				elseif ($key == "content") {
+					$output .= $value;
+				}
+			}
+			//$output .= '<br />';
+		}
+		//$output .= '</ul>';
+		return $output;
+	}
 	function array_flatten_recursive($array) { 
 		if($array) { 
 			$flat = array(); 
