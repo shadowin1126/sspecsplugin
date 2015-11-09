@@ -134,10 +134,12 @@ function ss_func() {
 	$ss_frontcamera = json_decode($ss->frontcamera, true);
 	$ss_opengl11 = json_decode($ss->opengl11, true);
 	$ss_opengl1x = json_decode($ss->opengl1x, true);
+	$ss_opengl20 = json_decode($ss->opengl20, true);
+	$ss_opengl30 = json_decode($ss->opengl30, true);
 	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
 	
 	echo "<pre>";
-	print_r($ss_backcamera);
+	print_r($ss_display);
 	if ($ss_system != "") {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
@@ -151,16 +153,22 @@ function ss_func() {
 		echo $ss->print_model($ss_memory, 3, 9)."<br />";
 	}
 	if ($ss_backcamera != "") {
-		echo $ss->print_model($ss_backcamera, 4, 8)."<br />";
+		echo $ss->print_model($ss_backcamera, 5, 7)."<br />";
 	}
 	if ($ss_frontcamera != "") {
-		echo $ss->print_model($ss_frontcamera, 4, 8)."<br />";
+		echo $ss->print_model($ss_frontcamera, 5, 7)."<br />";
 	}
 	if ($ss_opengl11 != "") {
 		echo $ss->print_model($ss_opengl11, 4, 8)."<br />";
 	}
 	if ($ss_opengl1x != "") {
 		echo $ss->print_model($ss_opengl1x, 4, 8)."<br />";
+	}
+	if ($ss_opengl20 != "") {
+		echo $ss->print_model($ss_opengl20, 4, 8)."<br />";
+	}
+	if ($ss_opengl30 != "") {
+		echo $ss->print_model($ss_opengl30, 4, 8)."<br />";
 	}
 	if ($ss_graphicmodes != "") {
 		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
@@ -184,6 +192,8 @@ class SS {
 	public $frontcamera;
 	public $opengl11;
 	public $opengl1x;
+	public $opengl20;
+	public $opengl30;
 	public $graphicmodes;
 	
 	
@@ -209,6 +219,8 @@ class SS {
 		$this->frontcamera = $result['frontcamera'];
 		$this->opengl11 = $result['opengl11'];
 		$this->opengl1x = $result['opengl1x'];
+		$this->opengl20 = $result['opengl20'];
+		$this->opengl30 = $result['opengl30'];
 		$this->graphicmodes = $result['graphicmodes'];
 		
 		
@@ -265,17 +277,29 @@ class SS {
 	function flatten_array($arr) {
 		if (!$results) {
 			$results = array();
+			$i = 0;
 		}
 		if (is_array($arr)) {
 			$storekey = "";
 			foreach ($arr as $key => $value) {
 				// If value is an array, do not store value, e.g. array[content] = Array
+				$i++;
 				if (!is_array($value)) {
 					if ($key == "title") {
-						$results["title"] = $value;
+						//$i++;
+						$results["title$i"] = $value;
+						/**
+						if (isset($results['title'])) {
+							$results[] = $value;
+						} else {
+							//$results[$key] = array('value'=>$value, 'title'=>1);
+							$results["title"] = $value;
+						}
+						**/
 					}
 					elseif ($key == "subtitle") {
-						$results["subtitle"] = $value;
+						$subtitle = "subtitle$j";
+						$results[] = $value;
 					}
 					// Use temp key to store value in order to merge later if array[name] and array[content] exist
 					elseif ($key == "name") {
@@ -289,7 +313,7 @@ class SS {
 						} else {
 							$results[] = $value;
 						}
-					}
+					} 
 					elseif (is_int($key)) {
 						$results[] = $value;
 					}
