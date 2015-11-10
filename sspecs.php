@@ -138,8 +138,8 @@ function ss_func() {
 	$ss_opengl30 = json_decode($ss->opengl30, true);
 	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
 	
-	echo "<pre>";
-	print_r($ss_display);
+	//echo "<pre>";
+	//print_r($ss_display);
 	if ($ss_system != "") {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
@@ -244,6 +244,51 @@ class SS {
 		$checktitle = false;
 		if ($arr_field) {
 			$string = '<div class="row">';
+			foreach ($arr_field as $value) {
+				if ($value[0] == "subtitle") {
+					$string .= " (".$value[1].")</b></div>";
+					$checktitle = false;
+				}
+				if ($checktitle) {	
+					$string .= "</b></div>";
+					$checktitle = false;
+				}
+				if ($value[0] == "title") {
+					//if ($checktitle) {	
+					//	$string .= "</b></div>";
+					//	$checktitle = false;
+					//}
+					$string .= '<div class="small-12 columns"><b>'.$value[1];
+					$checktitle = true;
+				}
+				elseif (($value[0] == "content") || (is_int($value[0]))) {
+					//if ($checktitle) {	
+					//	$string .= "</b></div>";
+					//	$checktitle = false;
+					//}
+					$string .= '<div class="small-12 columns">'.$value[1].'</div>';
+				} else {
+					//if ($checktitle) {	
+					//	$string .= "</b></div>";
+					//	$checktitle = false;
+					//}
+					$string .= '<div class="small-'.$col1.' columns">'.$value[0].'</div>';
+					$string .= '<div class="small-'.$col2.' columns">'.$value[1].'</div>';
+				}
+			}
+			if ($checktitle) {	
+				$string .= "</b></div>";
+				$checktitle = false;
+			}
+			$string .= '</div>';
+		}
+		return $string;
+	}
+	/**
+	function print_model($arr_field, $col1, $col2) {
+		$checktitle = false;
+		if ($arr_field) {
+			$string = '<div class="row">';
 			foreach ($arr_field as $key => $value) {
 				if ((substr($key,0,5) == "title") || (substr($key,0,8) == "subtitle")) {
 					if (substr($key,0,5) == "title") {
@@ -273,6 +318,7 @@ class SS {
 		}
 		return $string;
 	}
+	**/
 	
 	function flatten_array($arr) {
 		if (!$results) {
