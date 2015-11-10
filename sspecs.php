@@ -331,40 +331,22 @@ class SS {
 				// If value is an array, do not store value, e.g. array[content] = Array
 				$i++;
 				if (!is_array($value)) {
-					if ($key == "title") {
-						//$i++;
-						$results["title$i"] = $value;
-						/**
-						if (isset($results['title'])) {
-							$results[] = $value;
-						} else {
-							//$results[$key] = array('value'=>$value, 'title'=>1);
-							$results["title"] = $value;
-						}
-						**/
-					}
-					elseif ($key == "subtitle") {
-						$subtitle = "subtitle$j";
-						$results[] = $value;
-					}
-					// Use temp key to store value in order to merge later if array[name] and array[content] exist
-					elseif ($key == "name") {
-						$storekey = $value;
-					}
-					elseif ($key == "content") {
-						// Merge (array[name] = value) + (array[content] = value) to become array[name] = content
-						if (($storekey) && ($storekey != "")) {
-							$results[$storekey] = $value;
-							$storekey = "";
-						} else {
-							$results[] = $value;
-						}
-					} 
-					elseif (is_int($key)) {
-						$results[] = $value;
-					}
+					if ($key == "name") {
+					$storekey = $value;
 				}
-				$results = array_merge($results, $this->flatten_array($value));
+				elseif ($key == "content") {
+					// Merge (array[name] = value) + (array[content] = value) to become array[name] = content
+					if (($storekey) && ($storekey != "")) {
+						$results[] = array($storekey,$value);
+						$storekey = "";
+					} else {
+						$results[] = array($key,$value);
+					}
+				} else {
+					$results[] = array($key,$value);
+				}
+			}
+			$results = array_merge($results, $this->flatten_array($value));
 			}
 		}
 		return $results;
