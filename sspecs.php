@@ -138,8 +138,8 @@ function ss_func() {
 	$ss_opengl30 = json_decode($ss->opengl30, true);
 	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
 	
-	//echo "<pre>";
-	//print_r($ss_display);
+	echo "<pre>";
+	print_r($ss_opengl11);
 	if ($ss_system != "") {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
@@ -323,30 +323,35 @@ class SS {
 	function flatten_array($arr) {
 		if (!$results) {
 			$results = array();
-			$i = 0;
+			//global $title_counter;
+			//$title_counter = 0;
 		}
 		if (is_array($arr)) {
 			$storekey = "";
 			foreach ($arr as $key => $value) {
 				// If value is an array, do not store value, e.g. array[content] = Array
-				$i++;
 				if (!is_array($value)) {
 					if ($key == "name") {
-					$storekey = $value;
-				}
-				elseif ($key == "content") {
-					// Merge (array[name] = value) + (array[content] = value) to become array[name] = content
-					if (($storekey) && ($storekey != "")) {
-						$results[] = array($storekey,$value);
-						$storekey = "";
+						$storekey = $value;
+					}
+					elseif ($key == "content") {
+						// Merge (array[name] = value) + (array[content] = value) to become array[] = (name, content)
+						if (($storekey) && ($storekey != "")) {
+							$results[] = array($storekey,$value);
+							$storekey = "";
+						} else {
+							$results[] = array($key,$value);
+						}
 					} else {
 						$results[] = array($key,$value);
 					}
 				} else {
-					$results[] = array($key,$value);
+					// To check for $value that is stored under $value[entry][0] and put it under array("content",$value[0])
+					if ($value[0][0]) {
+						$results[] = array("content",$value[0]);
+					}
+					$results = array_merge($results, $this->flatten_array($value));
 				}
-			}
-			$results = array_merge($results, $this->flatten_array($value));
 			}
 		}
 		return $results;
