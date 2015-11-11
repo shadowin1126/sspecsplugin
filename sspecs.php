@@ -11,11 +11,11 @@ License: GPL2
 */
 // http://codex.wordpress.org/Function_Reference/WP_Rewrite#Examples
 
+// Fork this project successfully to https://github.com/juzhax/sspecsplugin
 
-			
 function ss_seo_meta() {
 	global $ss,$wp_query;
-	
+
 	$wp_query->queried_object->post_title = $ss->seo_title;
 
 	add_filter( 'jetpack_enable_opengraph', '__return_false', 99 );
@@ -95,20 +95,20 @@ function ss_seo_loader_init() {
 
 
 	if ($ss->action == 'model') {
-	
+
 		// Set the current model
 		$ss->model = $path[2];
-		
+
 		// Get the current spec
 		$ss->get_specs();
-		
-		
-		
-		
-		
-		
-		// Replace Wordpress title / Seo ultimate title 
-		
+
+
+
+
+
+
+		// Replace Wordpress title / Seo ultimate title
+
 		if (isset($GLOBALS['seo_ultimate'])) {
 			remove_action('wp_head', array( $GLOBALS['seo_ultimate'], 'template_head' ), 1 );
 		}
@@ -117,7 +117,7 @@ function ss_seo_loader_init() {
 		add_filter( 'wp_title', 'ss_title', 10, 2);
 		add_action( 'wp_head', 'ss_seo_meta', 1);
 	}
-	
+
 }
 
 function ss_func() {
@@ -137,7 +137,7 @@ function ss_func() {
 	$ss_opengl20 = json_decode($ss->opengl20, true);
 	$ss_opengl30 = json_decode($ss->opengl30, true);
 	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
-	
+
 	//echo "<pre>";
 	//print_r($ss_display);
 	if ($ss_system != "") {
@@ -173,7 +173,7 @@ function ss_func() {
 	if ($ss_graphicmodes != "") {
 		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
 	}
-	
+
 }
 
 
@@ -195,17 +195,17 @@ class SS {
 	public $opengl20;
 	public $opengl30;
 	public $graphicmodes;
-	
-	
-	
-	
+
+
+
+
 	public function __construct() {
 		$this->seo_title = '';
 		$this->seo_desc = '';
 		$this->seo_keywords = '';
 	}
-	
-	
+
+
 	public function get_specs() {
 		global $wpdb;
 		$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'";';
@@ -222,23 +222,23 @@ class SS {
 		$this->opengl20 = $result['opengl20'];
 		$this->opengl30 = $result['opengl30'];
 		$this->graphicmodes = $result['graphicmodes'];
-		
-		
+
+
 //		return $result;
 	}
-	
+
 	public function print_specs() {
-		
+
 		echo $this->model;
-	
-	
-	
+
+
+
 	}
-	
+
 	public function print_android() {
 		echo $this->model;
 	}
-	
+
 	// Function to display sql field that is an array
 	function print_model($arr_field, $col1, $col2) {
 		$checktitle = false;
@@ -249,12 +249,12 @@ class SS {
 					$string .= " (".$value[1].")</b></div>";
 					$checktitle = false;
 				}
-				if ($checktitle) {	
+				if ($checktitle) {
 					$string .= "</b></div>";
 					$checktitle = false;
 				}
 				if ($value[0] == "title") {
-					//if ($checktitle) {	
+					//if ($checktitle) {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
@@ -262,13 +262,13 @@ class SS {
 					$checktitle = true;
 				}
 				elseif (($value[0] == "content") || (is_int($value[0]))) {
-					//if ($checktitle) {	
+					//if ($checktitle) {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
 					$string .= '<div class="small-12 columns">'.$value[1].'</div>';
 				} else {
-					//if ($checktitle) {	
+					//if ($checktitle) {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
@@ -276,7 +276,7 @@ class SS {
 					$string .= '<div class="small-'.$col2.' columns">'.$value[1].'</div>';
 				}
 			}
-			if ($checktitle) {	
+			if ($checktitle) {
 				$string .= "</b></div>";
 				$checktitle = false;
 			}
@@ -300,13 +300,13 @@ class SS {
 					}
 				}
 				elseif ((substr($key,0,7) == "content") || (is_int($key))) {
-					if ($checktitle) {	
+					if ($checktitle) {
 						$string .= "</b></div>";
 						$checktitle = false;
 					}
 					$string .= '<div class="small-12 columns">'.$value.'</div>';
 				} else {
-					if ($checktitle) {	
+					if ($checktitle) {
 						$string .= "</b></div>";
 						$checktitle = false;
 					}
@@ -319,7 +319,7 @@ class SS {
 		return $string;
 	}
 	**/
-	
+
 	function flatten_array($arr) {
 		if (!$results) {
 			$results = array();
@@ -379,16 +379,16 @@ class SS {
 		//$output .= '</ul>';
 		return $output;
 	}
-	function array_flatten_recursive($array) { 
-		if($array) { 
-			$flat = array(); 
-			foreach(new RecursiveIteratorIterator(new RecursiveArrayIterator($array), RecursiveIteratorIterator::SELF_FIRST) as $key=>$value) { 
-				if(!is_array($value)) { 
-					$flat[] = $value; 
-				} 
-			} 
-		
-			return $flat; 
+	function array_flatten_recursive($array) {
+		if($array) {
+			$flat = array();
+			foreach(new RecursiveIteratorIterator(new RecursiveArrayIterator($array), RecursiveIteratorIterator::SELF_FIRST) as $key=>$value) {
+				if(!is_array($value)) {
+					$flat[] = $value;
+				}
+			}
+
+			return $flat;
 		}
 	}
 	**/
