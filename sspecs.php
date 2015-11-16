@@ -126,31 +126,42 @@ function ss_func() {
 
 
 	//echo '<div>';
-	$ss_system = json_decode($ss->system, true);
-	$ss_display = json_decode($ss->display, true);
-	$ss_processor = json_decode($ss->processor, true);
-	$ss_memory = json_decode($ss->memory, true);
-	$ss_backcamera = json_decode($ss->backcamera, true);
-	$ss_frontcamera = json_decode($ss->frontcamera, true);
-	$ss_opengl11 = json_decode($ss->opengl11, true);
-	$ss_opengl1x = json_decode($ss->opengl1x, true);
-	$ss_opengl20 = json_decode($ss->opengl20, true);
-	$ss_opengl30 = json_decode($ss->opengl30, true);
-	$ss_graphicmodes = json_decode($ss->graphicmodes, true);
-<<<<<<< HEAD
+	//$tab_button = array();
 	
-	echo "<pre>";
-	print_r($ss_opengl11);
-=======
+	if ($ss->system) { $ss_system = json_decode($ss->system, true); $tab_button[] = array("System","system"); }
+	if ($ss->display) { $ss_display = json_decode($ss->display, true); $tab_button[] = array("Display","display"); }
+	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $tab_button[] = array("Processor","processor"); }
+	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $tab_button[] = array("Memory","memory"); }
+	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $tab_button[] = array("Back Camera","backcamera"); }
+	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $tab_button[] = array("Front Camera","frontcamera"); }
+	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $tab_button[] = array("OpenGL 1.1","opengl11"); }
+	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $tab_button[] = array("OpenGL 1.x","opengl1x"); }
+	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $tab_button[] = array("OpenGL 2.0","opengl20"); }
+	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $tab_button[] = array("OpenGL 3.0","opengl30"); }
+	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $tab_button[] = array("Graphic Modes","graphicmodes"); }
+	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $tab_button[] = array("Sensors","sensors"); }
+	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $tab_button[] = array("Codecs","codecs"); }
+	if ($ss->features) { $ss_features = json_decode($ss->features, true); $tab_button[] = array("Features","features"); }
+	
+	echo "<hr>";
+	echo "<ul class='button-group round'>";
+	foreach ($tab_button as $tab) {
+		echo "<li><a href='#' class='small button'>$tab[0]</a></li>";
+	}
+	echo "</ul>";
 
-	//echo "<pre>";
-	//print_r($ss_display);
->>>>>>> d9d5bbb57a491979d63f53ce636551a6cc009d1c
+	/**
+	echo "<pre>";
+	print_r($ss->system);
+	echo "<br />";
+	print_r($ss->codecs);
+	echo "</pre>";
+	**/
 	if ($ss_system != "") {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
 	if ($ss_display != "") {
-		echo $ss->print_model($ss_display, 6, 6)."<br />";
+		echo $ss->print_model($ss_display, 3, 9)."<br />";
 	}
 	if ($ss_processor != "") {
 		echo $ss->print_model($ss_processor, 3, 9)."<br />";
@@ -179,6 +190,15 @@ function ss_func() {
 	if ($ss_graphicmodes != "") {
 		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
 	}
+	if ($ss_sensors != "") {
+		echo $ss->print_model($ss_sensors, 4, 8)."<br />";
+	}
+	if ($ss_codecs != "") {
+		echo $ss->print_model($ss_codecs, 4, 8)."<br />";
+	}
+	if ($ss_features != "") {
+		echo $ss->print_model($ss_features, 4, 8)."<br />";
+	}
 
 }
 
@@ -201,6 +221,10 @@ class SS {
 	public $opengl20;
 	public $opengl30;
 	public $graphicmodes;
+	public $sensors;
+	public $codecs;
+	public $features;
+	public $shadowin;
 
 
 
@@ -218,7 +242,7 @@ class SS {
 		$result = $wpdb->get_row($query, ARRAY_A);
 		$this->seo_title = $result['model'];
 		$this->system = $result['system'];
-		$this->display = $result['display'];
+		$this->display = $result["display"];
 		$this->processor = $result['processor'];
 		$this->memory = $result['memory'];
 		$this->backcamera = $result['backcamera'];
@@ -228,6 +252,10 @@ class SS {
 		$this->opengl20 = $result['opengl20'];
 		$this->opengl30 = $result['opengl30'];
 		$this->graphicmodes = $result['graphicmodes'];
+		$this->sensors = $result['sensors'];
+		$this->codecs = $result['codecs'];
+		$this->features = $result['features'];
+		$this->shadowin = $result['display'];
 
 
 //		return $result;
@@ -278,8 +306,10 @@ class SS {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
-					$string .= '<div class="small-'.$col1.' columns">'.$value[0].'</div>';
-					$string .= '<div class="small-'.$col2.' columns">'.$value[1].'</div>';
+					if ($value[0] != "subtitle") {
+						$string .= '<div class="small-'.$col1.' columns">'.$value[0].'</div>';
+						$string .= '<div class="small-'.$col2.' columns">'.$value[1].'</div>';
+					}
 				}
 			}
 			if ($checktitle) {
