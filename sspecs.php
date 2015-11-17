@@ -151,11 +151,35 @@ function ss_func() {
 	echo "<ul class='button-group round'>";
 	foreach ($tab_button as $tab) {
 		$link = '/'.'model'.'/'.$ss->model.'/'.$tab[1].'/';
-		echo "<li><a href=$link class='small button'>$tab[0]</a></li>";
+		echo "<li><a href=$link class='tiny button'>$tab[0]</a></li>";
 	}
 	echo "</ul>";
 
-	echo $ss->specs;
+	// Test to display specs using accordion
+	echo '<ul class="accordion" data-accordion>';
+	foreach ($tab_button as $tab) {
+		$link = '/'.'model'.'/'.$ss->model.'/'.$tab[1].'/';
+		echo "
+  		<li class='accordion-navigation'>
+    	<a href=$link>$tab[0]</a>
+    	";
+    	if ($ss->specs == $tab[1]) {
+    		echo '
+			<div class="content active">
+			 Panel 1. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+			</div>
+			';
+    	}
+    	else {
+    		echo '
+    		<div class="content">
+			  Panel 2. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+			</div>
+			';
+    	}
+    }
+  	echo '</li></ul>';
+
 	/**
 	echo "<pre>";
 	print_r($ss->system);
@@ -177,10 +201,10 @@ function ss_func() {
 		echo $ss->print_model($ss_memory, 3, 9)."<br />";
 	}
 	if (($ss->specs == 'backcamera') && ($ss_backcamera != "")) {
-		echo $ss->print_model($ss_backcamera, 5, 7)."<br />";
+		echo $ss->print_model($ss_backcamera, 6, 6)."<br />";
 	}
 	if (($ss->specs == 'frontcamera') && ($ss_frontcamera != "")) {
-		echo $ss->print_model($ss_frontcamera, 5, 7)."<br />";
+		echo $ss->print_model($ss_frontcamera, 6, 6)."<br />";
 	}
 	if (($ss->specs == 'opengl11') && ($ss_opengl11 != "")) {
 		echo $ss->print_model($ss_opengl11, 4, 8)."<br />";
@@ -218,6 +242,7 @@ class SS {
 	public $seo_desc;
 	public $seo_keywords;
 	public $model;
+	public $specs;
 	public $system;
 	public $display;
 	public $processor;
