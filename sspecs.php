@@ -101,6 +101,9 @@ function ss_seo_loader_init() {
 
 		// Get the current spec
 		$ss->get_specs();
+		
+		// Set specs to path[3]
+		$ss->specs = $path[3];
 
 
 
@@ -142,14 +145,17 @@ function ss_func() {
 	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $tab_button[] = array("Sensors","sensors"); }
 	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $tab_button[] = array("Codecs","codecs"); }
 	if ($ss->features) { $ss_features = json_decode($ss->features, true); $tab_button[] = array("Features","features"); }
+	if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
 	
 	echo "<hr>";
 	echo "<ul class='button-group round'>";
 	foreach ($tab_button as $tab) {
-		echo "<li><a href='#' class='small button'>$tab[0]</a></li>";
+		$link = '/'.'model'.'/'.$ss->model.'/'.$tab[1].'/';
+		echo "<li><a href=$link class='small button'>$tab[0]</a></li>";
 	}
 	echo "</ul>";
 
+	echo $ss->specs;
 	/**
 	echo "<pre>";
 	print_r($ss->system);
@@ -157,48 +163,50 @@ function ss_func() {
 	print_r($ss->codecs);
 	echo "</pre>";
 	**/
-	if ($ss_system != "") {
+
+	if (($ss->specs == 'system') && ($ss_system != "")) {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
-	if ($ss_display != "") {
+	if (($ss->specs == 'display') && ($ss_display != "")) {
 		echo $ss->print_model($ss_display, 3, 9)."<br />";
 	}
-	if ($ss_processor != "") {
+	if (($ss->specs == 'processor') && ($ss_processor != "")) {
 		echo $ss->print_model($ss_processor, 3, 9)."<br />";
 	}
-	if ($ss_memory != "") {
+	if (($ss->specs == 'memory') && ($ss_memory != "")) {
 		echo $ss->print_model($ss_memory, 3, 9)."<br />";
 	}
-	if ($ss_backcamera != "") {
+	if (($ss->specs == 'backcamera') && ($ss_backcamera != "")) {
 		echo $ss->print_model($ss_backcamera, 5, 7)."<br />";
 	}
-	if ($ss_frontcamera != "") {
+	if (($ss->specs == 'frontcamera') && ($ss_frontcamera != "")) {
 		echo $ss->print_model($ss_frontcamera, 5, 7)."<br />";
 	}
-	if ($ss_opengl11 != "") {
+	if (($ss->specs == 'opengl11') && ($ss_opengl11 != "")) {
 		echo $ss->print_model($ss_opengl11, 4, 8)."<br />";
 	}
-	if ($ss_opengl1x != "") {
+	if (($ss->specs == 'opengl1x') && ($ss_opengl1x != "")) {
 		echo $ss->print_model($ss_opengl1x, 4, 8)."<br />";
 	}
-	if ($ss_opengl20 != "") {
+	if (($ss->specs == 'opengl20') && ($ss_opengl20 != "")) {
 		echo $ss->print_model($ss_opengl20, 4, 8)."<br />";
 	}
-	if ($ss_opengl30 != "") {
+	if (($ss->specs == 'opengl30') && ($ss_opengl30 != "")) {
 		echo $ss->print_model($ss_opengl30, 4, 8)."<br />";
 	}
-	if ($ss_graphicmodes != "") {
+	if (($ss->specs == 'graphicmodes') && ($ss_graphicmodes != "")) {
 		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
 	}
-	if ($ss_sensors != "") {
+	if (($ss->specs == 'sensors') && ($ss_sensors != "")) {
 		echo $ss->print_model($ss_sensors, 4, 8)."<br />";
 	}
-	if ($ss_codecs != "") {
+	if (($ss->specs == 'codecs') && ($ss_codecs != "")) {
 		echo $ss->print_model($ss_codecs, 4, 8)."<br />";
 	}
-	if ($ss_features != "") {
+	if (($ss->specs == 'features') && ($ss_features != "")) {
 		echo $ss->print_model($ss_features, 4, 8)."<br />";
 	}
+
 
 }
 
@@ -224,7 +232,6 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
-	public $shadowin;
 
 
 
@@ -255,7 +262,6 @@ class SS {
 		$this->sensors = $result['sensors'];
 		$this->codecs = $result['codecs'];
 		$this->features = $result['features'];
-		$this->shadowin = $result['display'];
 
 
 //		return $result;
