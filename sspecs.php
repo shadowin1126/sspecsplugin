@@ -125,60 +125,81 @@ function ss_seo_loader_init() {
 
 function ss_func() {
 	global $ss;
+	global $ss_system;
+	global $ss_display;
+	global $ss_processor;
+	global $ss_memory;
+	global $ss_backcamera;
+	global $ss_frontcamera;
+	global $ss_opengl11;
+	global $ss_opengl1x;
+	global $ss_opengl20;
+	global $ss_opengl30;
+	global $ss_graphicmodes;
+	global $ss_sensors;
+	global $ss_codecs;
+	global $ss_features;
 //	$ss->print_specs();
 
 
 	//echo '<div>';
-	//$tab_button = array();
+	//$accordion_tab = array();
 	
-	if ($ss->system) { $ss_system = json_decode($ss->system, true); $tab_button[] = array("System","system"); }
-	if ($ss->display) { $ss_display = json_decode($ss->display, true); $tab_button[] = array("Display","display"); }
-	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $tab_button[] = array("Processor","processor"); }
-	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $tab_button[] = array("Memory","memory"); }
-	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $tab_button[] = array("Back Camera","backcamera"); }
-	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $tab_button[] = array("Front Camera","frontcamera"); }
-	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $tab_button[] = array("OpenGL 1.1","opengl11"); }
-	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $tab_button[] = array("OpenGL 1.x","opengl1x"); }
-	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $tab_button[] = array("OpenGL 2.0","opengl20"); }
-	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $tab_button[] = array("OpenGL 3.0","opengl30"); }
-	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $tab_button[] = array("Graphic Modes","graphicmodes"); }
-	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $tab_button[] = array("Sensors","sensors"); }
-	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $tab_button[] = array("Codecs","codecs"); }
-	if ($ss->features) { $ss_features = json_decode($ss->features, true); $tab_button[] = array("Features","features"); }
+	if ($ss->system) { $ss_system = json_decode($ss->system, true); $accordion_tab[] = array("System","system"); }
+	if ($ss->display) { $ss_display = json_decode($ss->display, true); $accordion_tab[] = array("Display","display"); }
+	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $accordion_tab[] = array("Processor","processor"); }
+	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $accordion_tab[] = array("Memory","memory"); }
+	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $accordion_tab[] = array("Back Camera","backcamera"); }
+	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $accordion_tab[] = array("Front Camera","frontcamera"); }
+	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $accordion_tab[] = array("OpenGL 1.1","opengl11"); }
+	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $accordion_tab[] = array("OpenGL 1.x","opengl1x"); }
+	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $accordion_tab[] = array("OpenGL 2.0","opengl20"); }
+	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $accordion_tab[] = array("OpenGL 3.0","opengl30"); }
+	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $accordion_tab[] = array("Graphic Modes","graphicmodes"); }
+	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $accordion_tab[] = array("Sensors","sensors"); }
+	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $accordion_tab[] = array("Codecs","codecs"); }
+	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_tab[] = array("Features","features"); }
 	if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
 	
-	echo "<hr>";
-	echo "<ul class='button-group round'>";
-	foreach ($tab_button as $tab) {
-		$link = '/'.'model'.'/'.$ss->model.'/'.$tab[1].'/';
-		echo "<li><a href=$link class='tiny button'>$tab[0]</a></li>";
-	}
-	echo "</ul>";
+	echo "
+		<hr>
+		<div class='row'>
+		<div class='small-12 columns'>
+	";
 
 	// Test to display specs using accordion
 	echo '<ul class="accordion" data-accordion>';
-	foreach ($tab_button as $tab) {
-		$link = '/'.'model'.'/'.$ss->model.'/'.$tab[1].'/';
+	foreach ($accordion_tab as $tab) {
+		$link = '#'.$tab[1];
+		if ($tab[1] == 'system') { $accordion = $ss->print_model($ss_system, 6, 6, 3, 9); }
+		if ($tab[1] == 'display') { $accordion = $ss->print_model($ss_display, 6, 6, 4, 8); }
+		if ($tab[1] == 'processor') { $accordion = $ss->print_model($ss_processor, 6, 6, 3, 9); }
+		if ($tab[1] == 'memory') { $accordion = $ss->print_model($ss_memory, 6, 6, 4, 8); }
+		if ($tab[1] == 'backcamera') { $accordion = $ss->print_model($ss_backcamera, 7, 5, 6, 6); }
+		if ($tab[1] == 'frontcamera') { $accordion = $ss->print_model($ss_frontcamera, 7, 5, 6, 6); }
+		if ($tab[1] == 'opengl11') { $accordion = $ss->print_model($ss_opengl11, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl1x') { $accordion = $ss->print_model($ss_opengl1x, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl20') { $accordion = $ss->print_model($ss_opengl20, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl30') { $accordion = $ss->print_model($ss_opengl30, 7, 5, 4, 8); }
+		if ($tab[1] == 'graphicmodes') { $accordion = $ss->print_model($ss_graphicmodes, 7, 5, 6, 6); }
+		if ($tab[1] == 'sensors') { $accordion = $ss->print_model($ss_sensors, 5, 7, 4, 8); }
+		if ($tab[1] == 'codecs') { $accordion = $ss->print_model($ss_codecs, 6, 6, 4, 8); }
+		if ($tab[1] == 'features') { $accordion = $ss->print_model($ss_features, 6, 6, 4, 8); }
 		echo "
   		<li class='accordion-navigation'>
-    	<a href=$link>$tab[0]</a>
+    	<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
     	";
     	if ($ss->specs == $tab[1]) {
-    		echo '
-			<div class="content active">
-			 Panel 1. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-			</div>
-			';
+    		echo "<div id=$tab[1] class='content active' role='tabpanel'>";
     	}
     	else {
-    		echo '
-    		<div class="content">
-			  Panel 2. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-			</div>
-			';
+    		echo "<div id=$tab[1] class='content' role='tabpanel'>";
     	}
+    	echo "$accordion</div></li>";
     }
-  	echo '</li></ul>';
+  	echo '</ul>';
+  	echo "</div></div>";
+
 
 	/**
 	echo "<pre>";
@@ -187,7 +208,7 @@ function ss_func() {
 	print_r($ss->codecs);
 	echo "</pre>";
 	**/
-
+	/**
 	if (($ss->specs == 'system') && ($ss_system != "")) {
 		echo $ss->print_model($ss_system, 3, 9)."<br />";
 	}
@@ -230,7 +251,7 @@ function ss_func() {
 	if (($ss->specs == 'features') && ($ss_features != "")) {
 		echo $ss->print_model($ss_features, 4, 8)."<br />";
 	}
-
+	**/
 
 }
 
@@ -257,7 +278,6 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
-
 
 
 
@@ -292,10 +312,8 @@ class SS {
 //		return $result;
 	}
 
-	public function print_specs() {
-
+	public function print_specs($tab) {
 		echo $this->model;
-
 
 
 	}
@@ -305,7 +323,7 @@ class SS {
 	}
 
 	// Function to display sql field that is an array
-	function print_model($arr_field, $col1, $col2) {
+	function print_model($arr_field, $col1, $col2, $col3, $col4) {
 		$checktitle = false;
 		if ($arr_field) {
 			$string = '<div class="row">';
@@ -338,8 +356,8 @@ class SS {
 					//	$checktitle = false;
 					//}
 					if ($value[0] != "subtitle") {
-						$string .= '<div class="small-'.$col1.' columns">'.$value[0].'</div>';
-						$string .= '<div class="small-'.$col2.' columns">'.$value[1].'</div>';
+						$string .= '<div class="small-'.$col1.' medium-'.$col3. ' columns">'.$value[0].'</div>';
+						$string .= '<div class="small-'.$col2.' medium-'.$col4. ' columns">'.$value[1].'</div>';
 					}
 				}
 			}
