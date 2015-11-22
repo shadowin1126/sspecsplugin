@@ -125,20 +125,6 @@ function ss_seo_loader_init() {
 
 function ss_func() {
 	global $ss;
-	global $ss_system;
-	global $ss_display;
-	global $ss_processor;
-	global $ss_memory;
-	global $ss_backcamera;
-	global $ss_frontcamera;
-	global $ss_opengl11;
-	global $ss_opengl1x;
-	global $ss_opengl20;
-	global $ss_opengl30;
-	global $ss_graphicmodes;
-	global $ss_sensors;
-	global $ss_codecs;
-	global $ss_features;
 //	$ss->print_specs();
 
 
@@ -159,8 +145,9 @@ function ss_func() {
 	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $accordion_tab[] = array("Sensors","sensors"); }
 	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $accordion_tab[] = array("Codecs","codecs"); }
 	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_tab[] = array("Features","features"); }
-	if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
+	//if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
 	
+	echo $ss->saved_title;
 	echo "
 		<hr>
 		<div class='row'>
@@ -189,11 +176,13 @@ function ss_func() {
   		<li class='accordion-navigation'>
     	<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
     	";
-    	if ($ss->specs == $tab[1]) {
+    	//if ($ss->specs == $tab[1]) {
+    	if ($tab[1] == 'system') {
     		echo "<div id=$tab[1] class='content active' role='tabpanel'>";
     	}
     	else {
-    		echo "<div id=$tab[1] class='content' role='tabpanel'>";
+    		echo "
+    	<div id=$tab[1] class='content' role='tabpanel'>";
     	}
     	echo "$accordion</div></li>";
     }
@@ -263,7 +252,8 @@ class SS {
 	public $seo_desc;
 	public $seo_keywords;
 	public $model;
-	public $specs;
+	//public $specs;
+	public $saved_title;
 	public $system;
 	public $display;
 	public $processor;
@@ -330,6 +320,8 @@ class SS {
 			foreach ($arr_field as $value) {
 				if ($value[0] == "subtitle") {
 					$string .= " (".$value[1].")</b></div>";
+					$accordion_title .= $value[1];
+					$saved_title = $accordion_title;
 					$checktitle = false;
 				}
 				if ($checktitle) {
@@ -342,6 +334,7 @@ class SS {
 					//	$checktitle = false;
 					//}
 					$string .= '<div class="small-12 columns"><b>'.$value[1];
+					$accordion_title = $value[1];
 					$checktitle = true;
 				}
 				elseif (($value[0] == "content") || (is_int($value[0]))) {
@@ -355,7 +348,7 @@ class SS {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
-					if ($value[0] != "subtitle") {
+					if (($value[0] != "subtitle") && ($value[0] != "Fingerprint")) {
 						$string .= '<div class="small-'.$col1.' medium-'.$col3. ' columns">'.$value[0].'</div>';
 						$string .= '<div class="small-'.$col2.' medium-'.$col4. ' columns">'.$value[1].'</div>';
 					}
