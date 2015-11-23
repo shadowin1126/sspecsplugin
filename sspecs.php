@@ -131,20 +131,20 @@ function ss_func() {
 	//echo '<div>';
 	//$accordion_tab = array();
 	
-	if ($ss->system) { $ss_system = json_decode($ss->system, true); $accordion_tab[] = array("System","system"); }
-	if ($ss->display) { $ss_display = json_decode($ss->display, true); $accordion_tab[] = array("Display","display"); }
-	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $accordion_tab[] = array("Processor","processor"); }
-	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $accordion_tab[] = array("Memory","memory"); }
-	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $accordion_tab[] = array("Back Camera","backcamera"); }
-	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $accordion_tab[] = array("Front Camera","frontcamera"); }
-	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $accordion_tab[] = array("OpenGL 1.1","opengl11"); }
-	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $accordion_tab[] = array("OpenGL 1.x","opengl1x"); }
-	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $accordion_tab[] = array("OpenGL 2.0","opengl20"); }
-	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $accordion_tab[] = array("OpenGL 3.0","opengl30"); }
-	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $accordion_tab[] = array("Graphic Modes","graphicmodes"); }
-	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $accordion_tab[] = array("Sensors","sensors"); }
-	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $accordion_tab[] = array("Codecs","codecs"); }
-	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_tab[] = array("Features","features"); }
+	if ($ss->system) { $ss_system = json_decode($ss->system, true); $accordion_title = $ss->get_title($ss_system); $accordion_tab[] = array($accordion_title,"system"); }
+	if ($ss->display) { $ss_display = json_decode($ss->display, true); $accordion_title = $ss->get_title($ss_display); $accordion_tab[] = array($accordion_title,"display"); }
+	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $accordion_title = $ss->get_title($ss_processor); $accordion_tab[] = array($accordion_title,"processor"); }
+	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $accordion_title = $ss->get_title($ss_memory); $accordion_tab[] = array($accordion_title,"memory"); }
+	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $accordion_title = $ss->get_title($ss_backcamera); $accordion_tab[] = array($accordion_title,"backcamera"); }
+	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $accordion_title = $ss->get_title($ss_frontcamera); $accordion_tab[] = array($accordion_title,"frontcamera"); }
+	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $accordion_title = $ss->get_title($ss_opengl11); $accordion_tab[] = array($accordion_title,"opengl11"); }
+	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $accordion_title = $ss->get_title($ss_opengl1x); $accordion_tab[] = array($accordion_title,"opengl1x"); }
+	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $accordion_title = $ss->get_title($ss_opengl20); $accordion_tab[] = array($accordion_title,"opengl20"); }
+	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $accordion_title = $ss->get_title($ss_opengl30); $accordion_tab[] = array($accordion_title,"opengl30"); }
+	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $accordion_title = $ss->get_title($ss_graphicmodes); $accordion_tab[] = array($accordion_title,"graphicmodes"); }
+	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $accordion_title = $ss->get_title($ss_sensors); $accordion_tab[] = array($accordion_title,"sensors"); }
+	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $accordion_title = $ss->get_title($ss_codecs); $accordion_tab[] = array($accordion_title,"codecs"); }
+	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_title = $ss->get_title($ss_features); $accordion_tab[] = array($accordion_title,"features"); }
 	//if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
 	
 	echo $ss->saved_title;
@@ -158,20 +158,20 @@ function ss_func() {
 	echo '<ul class="accordion" data-accordion>';
 	foreach ($accordion_tab as $tab) {
 		$link = '#'.$tab[1];
-		if ($tab[1] == 'system') { $accordion = $ss->print_model($ss_system, 6, 6, 3, 9); }
-		if ($tab[1] == 'display') { $accordion = $ss->print_model($ss_display, 6, 6, 4, 8); }
-		if ($tab[1] == 'processor') { $accordion = $ss->print_model($ss_processor, 6, 6, 3, 9); }
-		if ($tab[1] == 'memory') { $accordion = $ss->print_model($ss_memory, 6, 6, 4, 8); }
-		if ($tab[1] == 'backcamera') { $accordion = $ss->print_model($ss_backcamera, 7, 5, 6, 6); }
-		if ($tab[1] == 'frontcamera') { $accordion = $ss->print_model($ss_frontcamera, 7, 5, 6, 6); }
-		if ($tab[1] == 'opengl11') { $accordion = $ss->print_model($ss_opengl11, 7, 5, 4, 8); }
-		if ($tab[1] == 'opengl1x') { $accordion = $ss->print_model($ss_opengl1x, 7, 5, 4, 8); }
-		if ($tab[1] == 'opengl20') { $accordion = $ss->print_model($ss_opengl20, 7, 5, 4, 8); }
-		if ($tab[1] == 'opengl30') { $accordion = $ss->print_model($ss_opengl30, 7, 5, 4, 8); }
-		if ($tab[1] == 'graphicmodes') { $accordion = $ss->print_model($ss_graphicmodes, 7, 5, 6, 6); }
-		if ($tab[1] == 'sensors') { $accordion = $ss->print_model($ss_sensors, 5, 7, 4, 8); }
-		if ($tab[1] == 'codecs') { $accordion = $ss->print_model($ss_codecs, 6, 6, 4, 8); }
-		if ($tab[1] == 'features') { $accordion = $ss->print_model($ss_features, 6, 6, 4, 8); }
+		if ($tab[1] == 'system') { $accordion = $ss->get_model($ss_system, 6, 6, 3, 9); }
+		if ($tab[1] == 'display') { $accordion = $ss->get_model($ss_display, 6, 6, 4, 8); }
+		if ($tab[1] == 'processor') { $accordion = $ss->get_model($ss_processor, 6, 6, 3, 9); }
+		if ($tab[1] == 'memory') { $accordion = $ss->get_model($ss_memory, 6, 6, 4, 8); }
+		if ($tab[1] == 'backcamera') { $accordion = $ss->get_model($ss_backcamera, 7, 5, 6, 6); }
+		if ($tab[1] == 'frontcamera') { $accordion = $ss->get_model($ss_frontcamera, 7, 5, 6, 6); }
+		if ($tab[1] == 'opengl11') { $accordion = $ss->get_model($ss_opengl11, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl1x') { $accordion = $ss->get_model($ss_opengl1x, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl20') { $accordion = $ss->get_model($ss_opengl20, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl30') { $accordion = $ss->get_model($ss_opengl30, 7, 5, 4, 8); }
+		if ($tab[1] == 'graphicmodes') { $accordion = $ss->get_model($ss_graphicmodes, 7, 5, 6, 6); }
+		if ($tab[1] == 'sensors') { $accordion = $ss->get_model($ss_sensors, 5, 7, 4, 8); }
+		if ($tab[1] == 'codecs') { $accordion = $ss->get_model($ss_codecs, 6, 6, 4, 8); }
+		if ($tab[1] == 'features') { $accordion = $ss->get_model($ss_features, 6, 6, 4, 8); }
 		echo "
   		<li class='accordion-navigation'>
     	<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
@@ -252,8 +252,6 @@ class SS {
 	public $seo_desc;
 	public $seo_keywords;
 	public $model;
-	//public $specs;
-	public $saved_title;
 	public $system;
 	public $display;
 	public $processor;
@@ -312,20 +310,33 @@ class SS {
 		echo $this->model;
 	}
 
+	// Function to get title for accordion tabs in model display
+	public function get_title($arr_field) {
+		if ($arr_field) {
+			foreach ($arr_field as $value) {
+				if ($value[0] == "title") {
+					$title = $value[1];
+				}
+				elseif ($value[0] == "subtitle") {
+					$title .= " (".$value[1].")";
+					return $title;
+				}
+			}
+		}
+	}
+
 	// Function to display sql field that is an array
-	function print_model($arr_field, $col1, $col2, $col3, $col4) {
+	public function get_model($arr_field, $col1, $col2, $col3, $col4) {
 		$checktitle = false;
 		if ($arr_field) {
 			$string = '<div class="row">';
 			foreach ($arr_field as $value) {
 				if ($value[0] == "subtitle") {
-					$string .= " (".$value[1].")</b></div>";
-					$accordion_title .= $value[1];
-					$saved_title = $accordion_title;
+					//$string .= " (".$value[1].")</b></div>";
 					$checktitle = false;
 				}
 				if ($checktitle) {
-					$string .= "</b></div>";
+					$string .= $temptitle."</b></div>";
 					$checktitle = false;
 				}
 				if ($value[0] == "title") {
@@ -333,8 +344,8 @@ class SS {
 					//	$string .= "</b></div>";
 					//	$checktitle = false;
 					//}
-					$string .= '<div class="small-12 columns"><b>'.$value[1];
-					$accordion_title = $value[1];
+					$temptitle = '<div class="small-12 columns"><b>'.$value[1];
+					//$string .= '<div class="small-12 columns"><b>'.$value[1];
 					$checktitle = true;
 				}
 				elseif (($value[0] == "content") || (is_int($value[0]))) {
