@@ -94,20 +94,24 @@ function ss_seo_loader_init() {
 	$ss->action = $path[1];
 
 	if ($ss->action == 'brand') {
-		$ss->brand = $path[2];
-		$ss->get_brand();
-		$ss->print_brand();
-		echo $ss->brandname;
+		if ($path[2]) { // List all models of selected brand
+			$ss->brand = $path[2];
+			$ss->query = 'SELECT `brand`.`brand`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
+			$ss->get_brand();
+		} else { // List all brands
+			$ss->query = 'SELECT DISTINCT `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
+			$ss->get_brand();
+		}
 	}
 
 	if ($ss->action == 'model') {
+		if ($path[2]) { // List specs of selected model
+			// Set the current model
+			$ss->model = $path[2];
 
-		// Set the current model
-		$ss->model = $path[2];
-
-		// Get the current spec
-		$ss->get_specs();
-		
+			// Get the current spec
+			$ss->get_specs();
+		}
 
 
 
@@ -130,122 +134,13 @@ function ss_seo_loader_init() {
 
 function ss_func() {
 	global $ss;
-//	$ss->print_specs();
 
-
-	//echo '<div>';
-	//$accordion_tab = array();
-	
-	if ($ss->system) { $ss_system = json_decode($ss->system, true); $accordion_title = $ss->get_title($ss_system); $accordion_tab[] = array($accordion_title,"system"); }
-	if ($ss->display) { $ss_display = json_decode($ss->display, true); $accordion_title = $ss->get_title($ss_display); $accordion_tab[] = array($accordion_title,"display"); }
-	if ($ss->processor) { $ss_processor = json_decode($ss->processor, true); $accordion_title = $ss->get_title($ss_processor); $accordion_tab[] = array($accordion_title,"processor"); }
-	if ($ss->memory) { $ss_memory = json_decode($ss->memory, true); $accordion_title = $ss->get_title($ss_memory); $accordion_tab[] = array($accordion_title,"memory"); }
-	if ($ss->backcamera) { $ss_backcamera = json_decode($ss->backcamera, true); $accordion_title = $ss->get_title($ss_backcamera); $accordion_tab[] = array($accordion_title,"backcamera"); }
-	if ($ss->frontcamera) { $ss_frontcamera = json_decode($ss->frontcamera, true); $accordion_title = $ss->get_title($ss_frontcamera); $accordion_tab[] = array($accordion_title,"frontcamera"); }
-	if ($ss->opengl11) { $ss_opengl11 = json_decode($ss->opengl11, true); $accordion_title = $ss->get_title($ss_opengl11); $accordion_tab[] = array($accordion_title,"opengl11"); }
-	if ($ss->opengl1x) { $ss_opengl1x = json_decode($ss->opengl1x, true); $accordion_title = $ss->get_title($ss_opengl1x); $accordion_tab[] = array($accordion_title,"opengl1x"); }
-	if ($ss->opengl20) { $ss_opengl20 = json_decode($ss->opengl20, true); $accordion_title = $ss->get_title($ss_opengl20); $accordion_tab[] = array($accordion_title,"opengl20"); }
-	if ($ss->opengl30) { $ss_opengl30 = json_decode($ss->opengl30, true); $accordion_title = $ss->get_title($ss_opengl30); $accordion_tab[] = array($accordion_title,"opengl30"); }
-	if ($ss->graphicmodes) { $ss_graphicmodes = json_decode($ss->graphicmodes, true); $accordion_title = $ss->get_title($ss_graphicmodes); $accordion_tab[] = array($accordion_title,"graphicmodes"); }
-	if ($ss->sensors) { $ss_sensors = json_decode($ss->sensors, true); $accordion_title = $ss->get_title($ss_sensors); $accordion_tab[] = array($accordion_title,"sensors"); }
-	if ($ss->codecs) { $ss_codecs = json_decode($ss->codecs, true); $accordion_title = $ss->get_title($ss_codecs); $accordion_tab[] = array($accordion_title,"codecs"); }
-	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_title = $ss->get_title($ss_features); $accordion_tab[] = array($accordion_title,"features"); }
-	//if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
-	
-	echo "
-		<hr>
-		<div class='row'>
-		<div class='small-12 columns'>
-	";
-
-	// Test to display specs using accordion
-	echo '<ul class="accordion" data-accordion>';
-	foreach ($accordion_tab as $tab) {
-		$link = '#'.$tab[1];
-		if ($tab[1] == 'system') { $accordion = $ss->get_model($ss_system, 6, 6, 3, 9); }
-		if ($tab[1] == 'display') { $accordion = $ss->get_model($ss_display, 6, 6, 4, 8); }
-		if ($tab[1] == 'processor') { $accordion = $ss->get_model($ss_processor, 6, 6, 3, 9); }
-		if ($tab[1] == 'memory') { $accordion = $ss->get_model($ss_memory, 7, 5, 4, 8); }
-		if ($tab[1] == 'backcamera') { $accordion = $ss->get_model($ss_backcamera, 7, 5, 6, 6); }
-		if ($tab[1] == 'frontcamera') { $accordion = $ss->get_model($ss_frontcamera, 7, 5, 6, 6); }
-		if ($tab[1] == 'opengl11') { $accordion = $ss->get_model($ss_opengl11, 8, 4, 4, 8); }
-		if ($tab[1] == 'opengl1x') { $accordion = $ss->get_model($ss_opengl1x, 8, 4, 4, 8); }
-		if ($tab[1] == 'opengl20') { $accordion = $ss->get_model($ss_opengl20, 7, 5, 4, 8); }
-		if ($tab[1] == 'opengl30') { $accordion = $ss->get_model($ss_opengl30, 7, 5, 4, 8); }
-		if ($tab[1] == 'graphicmodes') { $accordion = $ss->get_model($ss_graphicmodes, 7, 5, 6, 6); }
-		if ($tab[1] == 'sensors') { $accordion = $ss->get_model($ss_sensors, 5, 7, 4, 8); }
-		if ($tab[1] == 'codecs') { $accordion = $ss->get_model($ss_codecs, 6, 6, 4, 8); }
-		if ($tab[1] == 'features') { $accordion = $ss->get_model($ss_features, 6, 6, 4, 8); }
-		echo "
-  		<li class='accordion-navigation'>
-    	<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
-    	";
-    	//if ($ss->specs == $tab[1]) {
-    	if ($tab[1] == 'system') {
-    		echo "<div id=$tab[1] class='content active' role='tabpanel'>";
-    	}
-    	else {
-    		echo "
-    	<div id=$tab[1] class='content' role='tabpanel'>";
-    	}
-    	echo "$accordion</div></li>";
-    }
-  	echo '</ul>';
-  	echo "</div></div>";
-
-
-	/**
-	echo "<pre>";
-	print_r($ss->system);
-	echo "<br />";
-	print_r($ss->codecs);
-	echo "</pre>";
-	**/
-	/**
-	if (($ss->specs == 'system') && ($ss_system != "")) {
-		echo $ss->print_model($ss_system, 3, 9)."<br />";
+	if ($ss->action == 'brand') {
+		$ss->print_brand();
 	}
-	if (($ss->specs == 'display') && ($ss_display != "")) {
-		echo $ss->print_model($ss_display, 3, 9)."<br />";
+	elseif ($ss->action == 'model') {
+		$ss->print_specs();
 	}
-	if (($ss->specs == 'processor') && ($ss_processor != "")) {
-		echo $ss->print_model($ss_processor, 3, 9)."<br />";
-	}
-	if (($ss->specs == 'memory') && ($ss_memory != "")) {
-		echo $ss->print_model($ss_memory, 3, 9)."<br />";
-	}
-	if (($ss->specs == 'backcamera') && ($ss_backcamera != "")) {
-		echo $ss->print_model($ss_backcamera, 6, 6)."<br />";
-	}
-	if (($ss->specs == 'frontcamera') && ($ss_frontcamera != "")) {
-		echo $ss->print_model($ss_frontcamera, 6, 6)."<br />";
-	}
-	if (($ss->specs == 'opengl11') && ($ss_opengl11 != "")) {
-		echo $ss->print_model($ss_opengl11, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'opengl1x') && ($ss_opengl1x != "")) {
-		echo $ss->print_model($ss_opengl1x, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'opengl20') && ($ss_opengl20 != "")) {
-		echo $ss->print_model($ss_opengl20, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'opengl30') && ($ss_opengl30 != "")) {
-		echo $ss->print_model($ss_opengl30, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'graphicmodes') && ($ss_graphicmodes != "")) {
-		echo $ss->print_model($ss_graphicmodes, 6, 6)."<br />";
-	}
-	if (($ss->specs == 'sensors') && ($ss_sensors != "")) {
-		echo $ss->print_model($ss_sensors, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'codecs') && ($ss_codecs != "")) {
-		echo $ss->print_model($ss_codecs, 4, 8)."<br />";
-	}
-	if (($ss->specs == 'features') && ($ss_features != "")) {
-		echo $ss->print_model($ss_features, 4, 8)."<br />";
-	}
-	**/
-
 }
 
 
@@ -255,8 +150,9 @@ class SS {
 	public $seo_title;
 	public $seo_desc;
 	public $seo_keywords;
+	public $query;
 	public $brand;
-	public $brandname;
+	public $get_brand;
 	public $model;
 	public $system;
 	public $display;
@@ -282,15 +178,15 @@ class SS {
 	}
 	
 
-	// Testing sql query from two tables
+	// SQL query for selected brand
 	public function get_brand() {
 		global $wpdb;
-		$query = 'SELECT `model.brandid`, `brand.brand` FROM `model`, `brand` WHERE `brand.brand` LIKE "'.$this->brand.'" AND `model.brandid` = `brand.brandid`;';
-		$result = $wpdb->get_row($query, ARRAY_A);
-		$this->brandname = $result['brand'];
+		//$query = 'SELECT `brand`.`brand`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$this->brand.'";';
+		$this->get_brand = $wpdb->get_results($this->query);
+		//$this->brandname = $result['seo_model'];
 	}
 
-
+	// SQL query for selected model
 	public function get_specs() {
 		global $wpdb;
 		$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'";';
@@ -311,17 +207,7 @@ class SS {
 		$this->codecs = $result['codecs'];
 		$this->features = $result['features'];
 	}
-
-	public function print_specs() {
-		echo $this->model;
-
-
-	}
-
-	public function print_brand() {
-		echo $this->system;
-	}
-
+	
 	// Function to get title for accordion tabs in model display
 	public function get_title($arr_field) {
 		if ($arr_field) {
@@ -376,15 +262,81 @@ class SS {
 					}
 				}
 			}
-			/**
-			if ($checktitle) {
-				$string .= "</b></div>";
-				$checktitle = false;
-			}
-			**/
 			$string .= '</div>';
 		}
 		return $string;
+	}
+
+	
+	public function print_brand() {
+		foreach ($this->get_brand as $brand) {
+			if ($brand->seo_model) {	// List models for selected brand
+				echo "<a href=/../model/$brand->model/>$brand->seo_model</a>";
+				echo "<br />";
+			} else {					// List all brands
+				echo "<a href=$brand->brand/>$brand->brand</a>";
+				echo "<br />";
+			}
+		}
+	}
+
+	public function print_specs() {
+		if ($this->system) { $ss_system = json_decode($this->system, true); $accordion_title = $this->get_title($ss_system); $accordion_tab[] = array($accordion_title,"system"); }
+		if ($this->display) { $ss_display = json_decode($this->display, true); $accordion_title = $this->get_title($ss_display); $accordion_tab[] = array($accordion_title,"display"); }
+		if ($this->processor) { $ss_processor = json_decode($this->processor, true); $accordion_title = $this->get_title($ss_processor); $accordion_tab[] = array($accordion_title,"processor"); }
+		if ($this->memory) { $ss_memory = json_decode($this->memory, true); $accordion_title = $this->get_title($ss_memory); $accordion_tab[] = array($accordion_title,"memory"); }
+		if ($this->backcamera) { $ss_backcamera = json_decode($this->backcamera, true); $accordion_title = $this->get_title($ss_backcamera); $accordion_tab[] = array($accordion_title,"backcamera"); }
+		if ($this->frontcamera) { $ss_frontcamera = json_decode($this->frontcamera, true); $accordion_title = $this->get_title($ss_frontcamera); $accordion_tab[] = array($accordion_title,"frontcamera"); }
+		if ($this->opengl11) { $ss_opengl11 = json_decode($this->opengl11, true); $accordion_title = $this->get_title($ss_opengl11); $accordion_tab[] = array($accordion_title,"opengl11"); }
+		if ($this->opengl1x) { $ss_opengl1x = json_decode($this->opengl1x, true); $accordion_title = $this->get_title($ss_opengl1x); $accordion_tab[] = array($accordion_title,"opengl1x"); }
+		if ($this->opengl20) { $ss_opengl20 = json_decode($this->opengl20, true); $accordion_title = $this->get_title($ss_opengl20); $accordion_tab[] = array($accordion_title,"opengl20"); }
+		if ($this->opengl30) { $ss_opengl30 = json_decode($this->opengl30, true); $accordion_title = $this->get_title($ss_opengl30); $accordion_tab[] = array($accordion_title,"opengl30"); }
+		if ($this->graphicmodes) { $ss_graphicmodes = json_decode($this->graphicmodes, true); $accordion_title = $this->get_title($ss_graphicmodes); $accordion_tab[] = array($accordion_title,"graphicmodes"); }
+		if ($this->sensors) { $ss_sensors = json_decode($this->sensors, true); $accordion_title = $this->get_title($ss_sensors); $accordion_tab[] = array($accordion_title,"sensors"); }
+		if ($this->codecs) { $ss_codecs = json_decode($this->codecs, true); $accordion_title = $this->get_title($ss_codecs); $accordion_tab[] = array($accordion_title,"codecs"); }
+		if ($this->features) { $ss_features = json_decode($this->features, true); $accordion_title = $this->get_title($ss_features); $accordion_tab[] = array($accordion_title,"features"); }
+		//if ($this->specs) { $ss_specs = json_decode($this->specs, true); }
+	
+		echo "
+			<hr>
+			<div class='row'>
+			<div class='small-12 columns'>
+		";
+
+		// Display specs in accordion
+		echo '<ul class="accordion" data-accordion>';
+		foreach ($accordion_tab as $tab) {
+			$link = '#'.$tab[1];
+			if ($tab[1] == 'system') { $accordion = $this->get_model($ss_system, 6, 6, 3, 9); }
+			if ($tab[1] == 'display') { $accordion = $this->get_model($ss_display, 6, 6, 4, 8); }
+			if ($tab[1] == 'processor') { $accordion = $this->get_model($ss_processor, 6, 6, 3, 9); }
+			if ($tab[1] == 'memory') { $accordion = $this->get_model($ss_memory, 7, 5, 4, 8); }
+			if ($tab[1] == 'backcamera') { $accordion = $this->get_model($ss_backcamera, 7, 5, 6, 6); }
+			if ($tab[1] == 'frontcamera') { $accordion = $this->get_model($ss_frontcamera, 7, 5, 6, 6); }
+			if ($tab[1] == 'opengl11') { $accordion = $this->get_model($ss_opengl11, 8, 4, 4, 8); }
+			if ($tab[1] == 'opengl1x') { $accordion = $this->get_model($ss_opengl1x, 8, 4, 4, 8); }
+			if ($tab[1] == 'opengl20') { $accordion = $this->get_model($ss_opengl20, 7, 5, 4, 8); }
+			if ($tab[1] == 'opengl30') { $accordion = $this->get_model($ss_opengl30, 7, 5, 4, 8); }
+			if ($tab[1] == 'graphicmodes') { $accordion = $this->get_model($ss_graphicmodes, 7, 5, 6, 6); }
+			if ($tab[1] == 'sensors') { $accordion = $this->get_model($ss_sensors, 5, 7, 4, 8); }
+			if ($tab[1] == 'codecs') { $accordion = $this->get_model($ss_codecs, 6, 6, 4, 8); }
+			if ($tab[1] == 'features') { $accordion = $this->get_model($ss_features, 6, 6, 4, 8); }
+			echo "
+			<li class='accordion-navigation'>
+			<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
+			";
+			//if ($this->specs == $tab[1]) {
+			if ($tab[1] == 'system') {
+				echo "<div id=$tab[1] class='content active' role='tabpanel'>";
+			}
+			else {
+				echo "
+			<div id=$tab[1] class='content' role='tabpanel'>";
+			}
+			echo "$accordion</div></li>";
+		}
+		echo '</ul>';
+		echo "</div></div>";
 	}
 
 	function flatten_array($arr) {
