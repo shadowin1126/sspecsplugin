@@ -52,7 +52,7 @@ function ss_seo_meta() {
 	<meta property="article:published_time" content="'.get_the_date('c').'" />
 	<meta property="article:modified_time" content="'.get_the_modified_date('c').'" />
 
-	<meta property="og:site_name" content="ss Intel" />
+	<meta property="og:site_name" content="Secret Specs" />
 	<meta property="og:locale" content="en_US" />
 	<meta property="fb:app_id" content="531406790246098"/>
 	<meta name="twitter:card" content="summary"/>
@@ -93,6 +93,12 @@ function ss_seo_loader_init() {
 	$path = explode('/', $urlArr['path']);
 	$ss->action = $path[1];
 
+	if ($ss->action == 'brand') {
+		$ss->brand = $path[2];
+		$ss->get_brand();
+		$ss->print_brand();
+		echo $ss->brandname;
+	}
 
 	if ($ss->action == 'model') {
 
@@ -102,8 +108,7 @@ function ss_seo_loader_init() {
 		// Get the current spec
 		$ss->get_specs();
 		
-		// Set specs to path[3]
-		$ss->specs = $path[3];
+
 
 
 
@@ -147,7 +152,6 @@ function ss_func() {
 	if ($ss->features) { $ss_features = json_decode($ss->features, true); $accordion_title = $ss->get_title($ss_features); $accordion_tab[] = array($accordion_title,"features"); }
 	//if ($ss->specs) { $ss_specs = json_decode($ss->specs, true); }
 	
-	echo $ss->saved_title;
 	echo "
 		<hr>
 		<div class='row'>
@@ -161,11 +165,11 @@ function ss_func() {
 		if ($tab[1] == 'system') { $accordion = $ss->get_model($ss_system, 6, 6, 3, 9); }
 		if ($tab[1] == 'display') { $accordion = $ss->get_model($ss_display, 6, 6, 4, 8); }
 		if ($tab[1] == 'processor') { $accordion = $ss->get_model($ss_processor, 6, 6, 3, 9); }
-		if ($tab[1] == 'memory') { $accordion = $ss->get_model($ss_memory, 6, 6, 4, 8); }
+		if ($tab[1] == 'memory') { $accordion = $ss->get_model($ss_memory, 7, 5, 4, 8); }
 		if ($tab[1] == 'backcamera') { $accordion = $ss->get_model($ss_backcamera, 7, 5, 6, 6); }
 		if ($tab[1] == 'frontcamera') { $accordion = $ss->get_model($ss_frontcamera, 7, 5, 6, 6); }
-		if ($tab[1] == 'opengl11') { $accordion = $ss->get_model($ss_opengl11, 7, 5, 4, 8); }
-		if ($tab[1] == 'opengl1x') { $accordion = $ss->get_model($ss_opengl1x, 7, 5, 4, 8); }
+		if ($tab[1] == 'opengl11') { $accordion = $ss->get_model($ss_opengl11, 8, 4, 4, 8); }
+		if ($tab[1] == 'opengl1x') { $accordion = $ss->get_model($ss_opengl1x, 8, 4, 4, 8); }
 		if ($tab[1] == 'opengl20') { $accordion = $ss->get_model($ss_opengl20, 7, 5, 4, 8); }
 		if ($tab[1] == 'opengl30') { $accordion = $ss->get_model($ss_opengl30, 7, 5, 4, 8); }
 		if ($tab[1] == 'graphicmodes') { $accordion = $ss->get_model($ss_graphicmodes, 7, 5, 6, 6); }
@@ -251,6 +255,8 @@ class SS {
 	public $seo_title;
 	public $seo_desc;
 	public $seo_keywords;
+	public $brand;
+	public $brandname;
 	public $model;
 	public $system;
 	public $display;
@@ -274,13 +280,22 @@ class SS {
 		$this->seo_desc = '';
 		$this->seo_keywords = '';
 	}
+	
+
+	// Testing sql query from two tables
+	public function get_brand() {
+		global $wpdb;
+		$query = 'SELECT `model.brandid`, `brand.brand` FROM `model`, `brand` WHERE `brand.brand` LIKE "'.$this->brand.'" AND `model.brandid` = `brand.brandid`;';
+		$result = $wpdb->get_row($query, ARRAY_A);
+		$this->brandname = $result['brand'];
+	}
 
 
 	public function get_specs() {
 		global $wpdb;
 		$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'";';
 		$result = $wpdb->get_row($query, ARRAY_A);
-		$this->seo_title = $result['model'];
+		$this->seo_title = $result['seo_model'];
 		$this->system = $result['system'];
 		$this->display = $result["display"];
 		$this->processor = $result['processor'];
@@ -295,19 +310,16 @@ class SS {
 		$this->sensors = $result['sensors'];
 		$this->codecs = $result['codecs'];
 		$this->features = $result['features'];
-
-
-//		return $result;
 	}
 
-	public function print_specs($tab) {
+	public function print_specs() {
 		echo $this->model;
 
 
 	}
 
-	public function print_android() {
-		echo $this->model;
+	public function print_brand() {
+		echo $this->system;
 	}
 
 	// Function to get title for accordion tabs in model display
@@ -330,9 +342,11 @@ class SS {
 		$checktitle = false;
 		if ($arr_field) {
 			$string = '<div class="row">';
+			$temptitle = "";
 			foreach ($arr_field as $value) {
 				if ($value[0] == "subtitle") {
 					//$string .= " (".$value[1].")</b></div>";
+					$temptitle = ""; // First title in the field is field name so it should be ignored for <hr> tag below which checks for title
 					$checktitle = false;
 				}
 				if ($checktitle) {
@@ -340,74 +354,38 @@ class SS {
 					$checktitle = false;
 				}
 				if ($value[0] == "title") {
-					//if ($checktitle) {
-					//	$string .= "</b></div>";
-					//	$checktitle = false;
-					//}
-					$temptitle = '<div class="small-12 columns"><b>'.$value[1];
-					//$string .= '<div class="small-12 columns"><b>'.$value[1];
-					$checktitle = true;
+					// Checks if it is the first title in this category
+					// Also checks if data starts with "media" then do not add line above
+					if (($temptitle == "") || (substr($value[1],0,5) == "Media")) {
+						$temptitle = '<div class="small-12 columns"><b>'.$value[1];
+						//$string .= '<div class="small-12 columns"><b>'.$value[1];
+						$checktitle = true;
+					}
+					// Else add a line above the title
+					else {
+						$temptitle = '<hr><div class="small-12 columns"><b>'.$value[1];
+						$checktitle = true;
+					}
 				}
 				elseif (($value[0] == "content") || (is_int($value[0]))) {
-					//if ($checktitle) {
-					//	$string .= "</b></div>";
-					//	$checktitle = false;
-					//}
 					$string .= '<div class="small-12 columns">'.$value[1].'</div>';
 				} else {
-					//if ($checktitle) {
-					//	$string .= "</b></div>";
-					//	$checktitle = false;
-					//}
 					if (($value[0] != "subtitle") && ($value[0] != "Fingerprint")) {
-						$string .= '<div class="small-'.$col1.' medium-'.$col3. ' columns">'.$value[0].'</div>';
+						$string .= '<div class="small-'.$col1.' medium-'.$col3. ' columns">'.$value[0].':</div>';
 						$string .= '<div class="small-'.$col2.' medium-'.$col4. ' columns">'.$value[1].'</div>';
 					}
 				}
 			}
+			/**
 			if ($checktitle) {
 				$string .= "</b></div>";
 				$checktitle = false;
 			}
+			**/
 			$string .= '</div>';
 		}
 		return $string;
 	}
-	/**
-	function print_model($arr_field, $col1, $col2) {
-		$checktitle = false;
-		if ($arr_field) {
-			$string = '<div class="row">';
-			foreach ($arr_field as $key => $value) {
-				if ((substr($key,0,5) == "title") || (substr($key,0,8) == "subtitle")) {
-					if (substr($key,0,5) == "title") {
-						$string .= '<div class="small-12 columns"><b>'.$value;
-						$checktitle = true;
-					} else {
-						$string .= " (".$value.")</b></div>";
-						$checktitle = false;
-					}
-				}
-				elseif ((substr($key,0,7) == "content") || (is_int($key))) {
-					if ($checktitle) {
-						$string .= "</b></div>";
-						$checktitle = false;
-					}
-					$string .= '<div class="small-12 columns">'.$value.'</div>';
-				} else {
-					if ($checktitle) {
-						$string .= "</b></div>";
-						$checktitle = false;
-					}
-					$string .= '<div class="small-'.$col1.' columns">'.$key.'</div>';
-					$string .= '<div class="small-'.$col2.' columns">'.$value.'</div>';
-				}
-			}
-			$string .= '</div>';
-		}
-		return $string;
-	}
-	**/
 
 	function flatten_array($arr) {
 		if (!$results) {
@@ -494,7 +472,7 @@ class SS {
 function my_flush_rules(){
 	$rules = get_option( 'rewrite_rules' );
 
-	if ( ! isset( $rules['(model)/(.+)$'] ) ) {
+	if ((!isset($rules['(brand)/(.+)$'])) || (!isset($rules['(model)/(.+)$']))) {
 		global $wp_rewrite;
 	   	$wp_rewrite->flush_rules();
 	}
@@ -503,6 +481,7 @@ function my_flush_rules(){
 // Adding a new rule
 function my_insert_rewrite_rules( $rules ) {
 	$newrules = array();
+	$newrules['brand/(.+)$'] = 'index.php?pagename=brand';
 	$newrules['model/(.+)$'] = 'index.php?pagename=model';
 	return $newrules + $rules;
 }
