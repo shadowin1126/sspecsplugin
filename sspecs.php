@@ -96,18 +96,24 @@ function ss_seo_loader_init() {
 	if ($ss->action == 'brand') {
 		if ($path[2]) { // List all models of selected brand
 			$ss->brand = $path[2];
-			$ss->query = 'SELECT `brand`.`brand`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
+			$ss->query = 'SELECT `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
 			$ss->get_brand();
 		} else { // List all brands
-			$ss->query = 'SELECT DISTINCT `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
+			$ss->query = 'SELECT DISTINCT `brand`.`seo_brand`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
 			$ss->get_brand();
 		}
 	}
 
 	if ($ss->action == 'model') {
 		if ($path[2]) { // List specs of selected model
+			/** 
+			if ($path[3]) { // Path[3] checks for duplicate model names
+				$ss->modelid = $path[3];
+			}
+			**/
+			
 			// Set the current model
-			$ss->model = $path[2];
+			$ss->model = $path[3];
 
 			// Get the current spec
 			$ss->get_specs();
@@ -154,6 +160,7 @@ class SS {
 	public $brand;
 	public $get_brand;
 	public $model;
+	public $modelid;
 	public $system;
 	public $display;
 	public $processor;
@@ -189,6 +196,11 @@ class SS {
 	// SQL query for selected model
 	public function get_specs() {
 		global $wpdb;
+		/**
+		if ($this->modelid) { // Checks for duplicate model names
+			$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'" AND `modelid` LIKE "'.$this->modelid.'";';
+		} 
+		**/
 		$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'";';
 		$result = $wpdb->get_row($query, ARRAY_A);
 		$this->seo_title = $result['seo_model'];
@@ -269,15 +281,31 @@ class SS {
 
 	
 	public function print_brand() {
+		echo "
+			<hr>
+			<div class='row'>
+			<div class='small-12 columns'>
+		";
 		foreach ($this->get_brand as $brand) {
-			if ($brand->seo_model) {	// List models for selected brand
-				echo "<a href=/../model/$brand->model/>$brand->seo_model</a>";
+			// List models for selected brand
+			if ($brand->seo_model) {
+			/**
+				if (($dup_model) && ($dup_model == $brand->model)) {
+					echo "<a href=/../model/$brand->model/$brand->modelid/>$brand->seo_model</a>"; // ModelID is added to path[3] for duplicate models
+					echo "<br />";
+				} else {
+			**/
+			
+				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
 				echo "<br />";
-			} else {					// List all brands
-				echo "<a href=$brand->brand/>$brand->brand</a>";
+				// $dup_model = $brand->model; // To check next record in table whether is duplicate model
+			// List all brands
+			} else {
+				echo "<a href=$brand->brand/>$brand->seo_brand</a>";
 				echo "<br />";
 			}
 		}
+		echo "</div></div>";
 	}
 
 	public function print_specs() {
