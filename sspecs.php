@@ -95,22 +95,27 @@ function ss_seo_loader_init() {
 
 	if ($ss->action == 'brand') {
 		if ($path[2]) { // List all models of selected brand
+			// Set the current brand
 			$ss->brand = $path[2];
-			$ss->query = 'SELECT `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
+			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
 			$ss->get_brand();
 		} else { // List all brands
 			$ss->query = 'SELECT DISTINCT `brand`.`seo_brand`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
 			$ss->get_brand();
 		}
+		
+		// Replace Wordpress title / Seo ultimate title
+		if (isset($GLOBALS['seo_ultimate'])) {
+			remove_action('wp_head', array( $GLOBALS['seo_ultimate'], 'template_head' ), 1 );
+		}
+		add_filter( 'jetpack_enable_opengraph', '__return_false', 99 );
+		add_filter( 'the_title', 'ss_title',9999);
+		add_filter( 'wp_title', 'ss_title', 10, 2);
+		add_action( 'wp_head', 'ss_seo_meta', 1);
 	}
 
-	if ($ss->action == 'model') {
+	elseif ($ss->action == 'model') {
 		if ($path[2]) { // List specs of selected model
-			/** 
-			if ($path[3]) { // Path[3] checks for duplicate model names
-				$ss->modelid = $path[3];
-			}
-			**/
 			
 			// Set the current model
 			$ss->model = $path[3];
@@ -126,7 +131,6 @@ function ss_seo_loader_init() {
 
 
 		// Replace Wordpress title / Seo ultimate title
-
 		if (isset($GLOBALS['seo_ultimate'])) {
 			remove_action('wp_head', array( $GLOBALS['seo_ultimate'], 'template_head' ), 1 );
 		}
@@ -188,9 +192,11 @@ class SS {
 	// SQL query for selected brand
 	public function get_brand() {
 		global $wpdb;
-		//$query = 'SELECT `brand`.`brand`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$this->brand.'";';
 		$this->get_brand = $wpdb->get_results($this->query);
-		//$this->brandname = $result['seo_model'];
+		
+		// Set page title
+		//if ($this->get_brand[0]->model) { $this->seo_title = $this->get_brand[0]->brand; }
+		//else { $this->seo_title = 'Brand'; }
 	}
 
 	// SQL query for selected model
@@ -285,27 +291,28 @@ class SS {
 			<hr>
 			<div class='row'>
 			<div class='small-12 columns'>
+			<div class='row'>
 		";
+		$array_count = COUNT($this->get_brand);	// To check for last
+		$i = 0;									// item in array
 		foreach ($this->get_brand as $brand) {
 			// List models for selected brand
 			if ($brand->seo_model) {
-			/**
-				if (($dup_model) && ($dup_model == $brand->model)) {
-					echo "<a href=/../model/$brand->model/$brand->modelid/>$brand->seo_model</a>"; // ModelID is added to path[3] for duplicate models
-					echo "<br />";
-				} else {
-			**/
-			
+				$i++;
+				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
+				else { echo "<div class='small-12 medium-6 columns end'>"; }
 				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
-				echo "<br />";
-				// $dup_model = $brand->model; // To check next record in table whether is duplicate model
+				echo "</div>";
 			// List all brands
 			} else {
+				$i++;
+				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
+				else { echo "<div class='small-12 medium-6 columns end'>"; }
 				echo "<a href=$brand->brand/>$brand->seo_brand</a>";
-				echo "<br />";
+				echo "</div>";
 			}
 		}
-		echo "</div></div>";
+		echo "</div></div></div>";
 	}
 
 	public function print_specs() {
