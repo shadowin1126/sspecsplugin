@@ -94,12 +94,16 @@ function ss_seo_loader_init() {
 	$ss->action = $path[1];
 
 	if ($ss->action == 'brand') {
-		if ($path[2]) { // List all models of selected brand
+		// List all models of selected brand
+		if ($path[2]) {
 			// Set the current brand
 			$ss->brand = $path[2];
+			// Get the current brand
 			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
 			$ss->get_brand();
-		} else { // List all brands
+		// List all brands
+		} else {
+			$ss->page = 'allbrand';
 			$ss->query = 'SELECT DISTINCT `brand`.`seo_brand`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
 			$ss->get_brand();
 		}
@@ -157,6 +161,7 @@ function ss_func() {
 class SS {
 
 	public $action;
+	public $page;
 	public $seo_title;
 	public $seo_desc;
 	public $seo_keywords;
@@ -195,8 +200,8 @@ class SS {
 		$this->get_brand = $wpdb->get_results($this->query);
 		
 		// Set page title
-		//if ($this->get_brand[0]->model) { $this->seo_title = $this->get_brand[0]->brand; }
-		//else { $this->seo_title = 'Brand'; }
+		if ($this->get_brand[0]->model) { $this->seo_title = $this->get_brand[0]->seo_brand; }
+		else { $this->seo_title = 'Brand'; }
 	}
 
 	// SQL query for selected model
@@ -286,6 +291,7 @@ class SS {
 	}
 
 	
+	// Function to print all brand
 	public function print_brand() {
 		echo "
 			<hr>
@@ -293,22 +299,54 @@ class SS {
 			<div class='small-12 columns'>
 			<div class='row'>
 		";
+		/**
+		// Brand page to display popular models on top
+		if ($this->page == 'allbrand') {
+			echo "
+				<div class='small-12 columns'>
+				<ul class='small-block-grid-2 large-block-grid-4'>
+					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
+					<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
+					<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
+					<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
+					<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
+					<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
+					<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
+					<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
+					<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
+					<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
+					<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
+					<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
+					<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
+					<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
+					<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
+					<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
+					<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
+					<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
+					<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
+					<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
+				</ul>
+				</div></div>
+				<div class='row'>
+			";
+		}
+		**/
 		$array_count = COUNT($this->get_brand);	// To check for last
 		$i = 0;									// item in array
 		foreach ($this->get_brand as $brand) {
-			// List models for selected brand
-			if ($brand->seo_model) {
-				$i++;
-				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
-				else { echo "<div class='small-12 medium-6 columns end'>"; }
-				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
-				echo "</div>";
-			// List all brands
-			} else {
+			// List all brand
+			if ($this->page == 'allbrand') {
 				$i++;
 				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
 				else { echo "<div class='small-12 medium-6 columns end'>"; }
 				echo "<a href=$brand->brand/>$brand->seo_brand</a>";
+				echo "</div>";
+			// List models for selected brand
+			} else {
+				$i++;
+				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
+				else { echo "<div class='small-12 medium-6 columns end'>"; }
+				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
 				echo "</div>";
 			}
 		}
@@ -492,10 +530,89 @@ function ss_func( $xml ) {
 
 $ss = new SS();
 
+// Widget to display popular brand
+class brand_widget extends WP_Widget {
+	// Creating the widget
+	function __construct() {
+		parent::__construct(
+			'brand_widget', // Base ID
+			__('#Brand Widget', 'text_domain'), // Widget name
+			array( 'description' => __( 'Secret Specs widget to display popular brand', 'text_domain' ), ) // Widget description
+		);
+	}
+
+	// Front-end
+	public function widget( $args, $instance ) {
+		$title = apply_filters( 'widget_title', $instance['title'] );
+
+	// Before and after widget arguments are defined by themes
+		echo $args['before_widget'];
+		if ( ! empty( $title ) )
+		echo $args['before_title'] .'<h5><b>'. $title .'</b></h5>'. $args['after_title'];
+
+	// Display output
+		global $ss;	
+		if ($ss->action == 'brand') {
+			
+			echo "
+				<div class='row'>
+				<div class='small-12 columns'>
+				<ul class='small-block-grid-1 large-block-grid-2'>
+					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
+					<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
+					<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
+					<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
+					<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
+					<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
+					<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
+					<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
+					<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
+					<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
+					<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
+					<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
+					<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
+					<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
+					<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
+					<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
+					<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
+					<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
+					<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
+					<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
+				</ul>
+				</div></div>
+				<br />
+			";
+		}
+		echo $args['after_widget'];
+	}
+
+	// Backend
+	public function form( $instance ) {
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = __( 'New title', 'text_domain' );
+		}
+	// Admin Form
+		?>
+		<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
+		<?php
+	}
+} // Class country_widget ends here
+
+// Register and load the widget
+function load_widget() {
+    register_widget( 'brand_widget' );
+}
 
 
 add_shortcode( 'sspecs', 'ss_func' );
 
+add_action( 'widgets_init', 'load_widget' );
 add_action( 'init', 'ss_seo_loader_init', 0);
 add_filter( 'rewrite_rules_array','my_insert_rewrite_rules' );
 add_action( 'wp_loaded','my_flush_rules' );
