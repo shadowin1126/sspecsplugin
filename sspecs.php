@@ -94,6 +94,7 @@ function ss_seo_loader_init() {
 	$ss->action = $path[1];
 
 	if ($ss->action == 'brand') {
+	
 		// List all models of selected brand
 		if ($path[2]) {
 			// Set the current brand
@@ -101,6 +102,7 @@ function ss_seo_loader_init() {
 			// Get the current brand
 			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
 			$ss->get_brand();
+
 		// List all brands
 		} else {
 			$ss->page = 'allbrand';
@@ -119,13 +121,23 @@ function ss_seo_loader_init() {
 	}
 
 	elseif ($ss->action == 'model') {
-		if ($path[2]) { // List specs of selected model
+	
+		// List specs of selected model
+		if ($path[2]) {
 			
 			// Set the current model
 			$ss->model = $path[3];
 
 			// Get the current spec
+			$ss->query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
 			$ss->get_specs();
+		}
+		
+		// List all models
+		else {
+			$ss->page = 'allmodel';
+			$ss->query = 'SELECT `brand`.`brand`, `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
+			$ss->get_model();
 		}
 
 
@@ -153,7 +165,12 @@ function ss_func() {
 		$ss->print_brand();
 	}
 	elseif ($ss->action == 'model') {
-		$ss->print_specs();
+		if ($ss->page == 'allmodel') {
+		//if ($ss->page == 'allmodel') {
+			$ss->print_model();
+		} else {
+			$ss->print_specs();
+		}
 	}
 }
 
@@ -168,6 +185,7 @@ class SS {
 	public $query;
 	public $brand;
 	public $get_brand;
+	public $get_model;
 	public $model;
 	public $modelid;
 	public $system;
@@ -204,16 +222,19 @@ class SS {
 		else { $this->seo_title = 'Brand'; }
 	}
 
+	// SQL query to list all models
+	public function get_model() {
+		global $wpdb;
+		
+		$this->get_model = $wpdb->get_results($this->query);
+		$this->seo_title = 'Models';
+	}
+
 	// SQL query for selected model
 	public function get_specs() {
 		global $wpdb;
-		/**
-		if ($this->modelid) { // Checks for duplicate model names
-			$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'" AND `modelid` LIKE "'.$this->modelid.'";';
-		} 
-		**/
-		$query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$this->model.'";';
-		$result = $wpdb->get_row($query, ARRAY_A);
+
+		$result = $wpdb->get_row($this->query, ARRAY_A);
 		$this->seo_title = $result['seo_model'];
 		$this->system = $result['system'];
 		$this->display = $result["display"];
@@ -247,7 +268,7 @@ class SS {
 	}
 
 	// Function to display sql field that is an array
-	public function get_model($arr_field, $col1, $col2, $col3, $col4) {
+	public function get_modelspecs($arr_field, $col1, $col2, $col3, $col4) {
 		$checktitle = false;
 		if ($arr_field) {
 			$string = '<div class="row">';
@@ -299,38 +320,7 @@ class SS {
 			<div class='small-12 columns'>
 			<div class='row'>
 		";
-		/**
-		// Brand page to display popular models on top
-		if ($this->page == 'allbrand') {
-			echo "
-				<div class='small-12 columns'>
-				<ul class='small-block-grid-2 large-block-grid-4'>
-					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
-					<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
-					<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
-					<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
-					<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
-					<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
-					<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
-					<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
-					<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
-					<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
-					<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
-					<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
-					<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
-					<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
-					<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
-					<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
-					<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
-					<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
-					<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
-					<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
-				</ul>
-				</div></div>
-				<div class='row'>
-			";
-		}
-		**/
+		
 		$array_count = COUNT($this->get_brand);	// To check for last
 		$i = 0;									// item in array
 		foreach ($this->get_brand as $brand) {
@@ -349,6 +339,37 @@ class SS {
 				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
 				echo "</div>";
 			}
+		}
+		echo "</div></div></div>";
+	}
+	
+	public function print_model() {
+		echo "
+			<ul class='pagination right'>
+				<li class='arrow unavailable'><a href=''>&laquo;</a></li>
+				<li class='current'><a href=''>1</a></li>
+				<li><a href=''>2</a></li>
+				<li><a href=''>3</a></li>
+				<li><a href=''>4</a></li>
+				<li class='unavailable'><a href=''>&hellip;</a></li>
+				<li><a href=''>12</a></li>
+				<li><a href=''>13</a></li>
+				<li class='arrow'><a href=''>&raquo;</a></li>
+			</ul>
+			<hr>
+			<div class='row'>
+			<div class='small-12 columns'>
+			<div class='row'>
+		";
+		$array_count = COUNT($this->get_model);	// To check for last
+		$i = 0;									// item in array
+		foreach ($this->get_model as $model) {
+			// List all models
+			$i++;
+			if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
+			else { echo "<div class='small-12 medium-6 columns end'>"; }
+			echo "<a href=$model->brand/$model->model/>$model->seo_model</a>";
+			echo "</div>";
 		}
 		echo "</div></div></div>";
 	}
@@ -380,20 +401,20 @@ class SS {
 		echo '<ul class="accordion" data-accordion>';
 		foreach ($accordion_tab as $tab) {
 			$link = '#'.$tab[1];
-			if ($tab[1] == 'system') { $accordion = $this->get_model($ss_system, 6, 6, 3, 9); }
-			if ($tab[1] == 'display') { $accordion = $this->get_model($ss_display, 6, 6, 4, 8); }
-			if ($tab[1] == 'processor') { $accordion = $this->get_model($ss_processor, 6, 6, 3, 9); }
-			if ($tab[1] == 'memory') { $accordion = $this->get_model($ss_memory, 7, 5, 4, 8); }
-			if ($tab[1] == 'backcamera') { $accordion = $this->get_model($ss_backcamera, 7, 5, 6, 6); }
-			if ($tab[1] == 'frontcamera') { $accordion = $this->get_model($ss_frontcamera, 7, 5, 6, 6); }
-			if ($tab[1] == 'opengl11') { $accordion = $this->get_model($ss_opengl11, 8, 4, 4, 8); }
-			if ($tab[1] == 'opengl1x') { $accordion = $this->get_model($ss_opengl1x, 8, 4, 4, 8); }
-			if ($tab[1] == 'opengl20') { $accordion = $this->get_model($ss_opengl20, 7, 5, 4, 8); }
-			if ($tab[1] == 'opengl30') { $accordion = $this->get_model($ss_opengl30, 7, 5, 4, 8); }
-			if ($tab[1] == 'graphicmodes') { $accordion = $this->get_model($ss_graphicmodes, 7, 5, 6, 6); }
-			if ($tab[1] == 'sensors') { $accordion = $this->get_model($ss_sensors, 5, 7, 4, 8); }
-			if ($tab[1] == 'codecs') { $accordion = $this->get_model($ss_codecs, 6, 6, 4, 8); }
-			if ($tab[1] == 'features') { $accordion = $this->get_model($ss_features, 6, 6, 4, 8); }
+			if ($tab[1] == 'system') { $accordion = $this->get_modelspecs($ss_system, 6, 6, 3, 9); }
+			if ($tab[1] == 'display') { $accordion = $this->get_modelspecs($ss_display, 6, 6, 4, 8); }
+			if ($tab[1] == 'processor') { $accordion = $this->get_modelspecs($ss_processor, 6, 6, 3, 9); }
+			if ($tab[1] == 'memory') { $accordion = $this->get_modelspecs($ss_memory, 7, 5, 4, 8); }
+			if ($tab[1] == 'backcamera') { $accordion = $this->get_modelspecs($ss_backcamera, 7, 5, 6, 6); }
+			if ($tab[1] == 'frontcamera') { $accordion = $this->get_modelspecs($ss_frontcamera, 7, 5, 6, 6); }
+			if ($tab[1] == 'opengl11') { $accordion = $this->get_modelspecs($ss_opengl11, 8, 4, 4, 8); }
+			if ($tab[1] == 'opengl1x') { $accordion = $this->get_modelspecs($ss_opengl1x, 8, 4, 4, 8); }
+			if ($tab[1] == 'opengl20') { $accordion = $this->get_modelspecs($ss_opengl20, 7, 5, 4, 8); }
+			if ($tab[1] == 'opengl30') { $accordion = $this->get_modelspecs($ss_opengl30, 7, 5, 4, 8); }
+			if ($tab[1] == 'graphicmodes') { $accordion = $this->get_modelspecs($ss_graphicmodes, 7, 5, 6, 6); }
+			if ($tab[1] == 'sensors') { $accordion = $this->get_modelspecs($ss_sensors, 5, 7, 4, 8); }
+			if ($tab[1] == 'codecs') { $accordion = $this->get_modelspecs($ss_codecs, 6, 6, 4, 8); }
+			if ($tab[1] == 'features') { $accordion = $this->get_modelspecs($ss_features, 6, 6, 4, 8); }
 			echo "
 			<li class='accordion-navigation'>
 			<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
@@ -557,7 +578,10 @@ class brand_widget extends WP_Widget {
 			echo "
 				<div class='row'>
 				<div class='small-12 columns'>
-				<ul class='small-block-grid-1 large-block-grid-2'>
+				<div class='panel'>
+				<h5>Popular Brand</h5>
+				<br />
+				<ul class='small-block-grid-2'>
 					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
 					<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
 					<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
@@ -579,7 +603,7 @@ class brand_widget extends WP_Widget {
 					<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
 					<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
 				</ul>
-				</div></div>
+				</div></div></div>
 				<br />
 			";
 		}
