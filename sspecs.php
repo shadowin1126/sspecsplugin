@@ -106,7 +106,7 @@ function ss_seo_loader_init() {
 		// List all brands
 		} else {
 			$ss->page = 'allbrand';
-			$ss->query = 'SELECT DISTINCT `brand`.`seo_brand`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
+			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
 			$ss->get_brand();
 		}
 		
@@ -218,7 +218,7 @@ class SS {
 		$this->get_brand = $wpdb->get_results($this->query);
 		
 		// Set page title
-		if ($this->get_brand[0]->model) { $this->seo_title = $this->get_brand[0]->seo_brand; }
+		if ($this->get_brand[0]->modelid) { $this->seo_title = $this->get_brand[0]->seo_brand; }
 		else { $this->seo_title = 'Brand'; }
 	}
 
@@ -321,16 +321,49 @@ class SS {
 			<div class='row'>
 		";
 		
+		$dup_brand = $this->get_brand[0]->brand;	// To get distinct brand
+		$current_count = 0;							// To count number of models for each brand
+		$current_brand = $this->get_brand[0]->brand;
+		$current_seobrand = $this->get_brand[0]->seo_brand;
 		$array_count = COUNT($this->get_brand);	// To check for last
 		$i = 0;									// item in array
 		foreach ($this->get_brand as $brand) {
 			// List all brand
 			if ($this->page == 'allbrand') {
 				$i++;
-				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
-				else { echo "<div class='small-12 medium-6 columns end'>"; }
-				echo "<a href=$brand->brand/>$brand->seo_brand</a>";
-				echo "</div>";
+				if ($i < $array_count) {
+					if ($brand->brand != $dup_brand) {
+						echo "<div class='small-12 medium-6 columns'>";
+						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
+						echo "</div>";
+						$dup_brand = $brand->brand;
+						$current_count = 1;
+					} else {
+						$current_count++;
+					}
+					$current_brand = $brand->brand;
+					$current_seobrand = $brand->seo_brand;
+				} else {
+					if ($brand->brand != $dup_brand) {
+						echo "<div class='small-12 medium-6 columns'>";
+						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
+						echo "</div>";
+						$current_count = 1;
+					}
+					echo "<div class='small-12 medium-6 columns end'>";
+					echo "<a href=$brand->brand/>$brand->seo_brand ($current_count)</a>";
+					echo "</div>";
+				}
+				/**
+				if ($brand->brand != $dup_brand) {
+					$dup_brand = $brand->brand;
+					$i++;
+					if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
+					else { echo "<div class='small-12 medium-6 columns end'>"; }
+					echo "<a href=$brand->brand/>$brand->seo_brand</a>";
+					echo "</div>";
+				}
+				**/
 			// List models for selected brand
 			} else {
 				$i++;
