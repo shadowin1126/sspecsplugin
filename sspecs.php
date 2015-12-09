@@ -92,7 +92,8 @@ function ss_seo_loader_init() {
 	$urlArr = parse_url(filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRIPPED));
 	$path = explode('/', $urlArr['path']);
 	$ss->action = $path[1];
-
+	
+	// Brand page
 	if ($ss->action == 'brand') {
 	
 		// List all models of selected brand
@@ -119,11 +120,15 @@ function ss_seo_loader_init() {
 		add_filter( 'wp_title', 'ss_title', 10, 2);
 		add_action( 'wp_head', 'ss_seo_meta', 1);
 	}
-
+	
+	// Model page
 	elseif ($ss->action == 'model') {
 	
 		// List specs of selected model
 		if ($path[2]) {
+			
+			// Set the current brand (for prev and next button purposes)
+			$ss->brand = $path[2];
 			
 			// Set the current model
 			$ss->model = $path[3];
@@ -160,13 +165,15 @@ function ss_seo_loader_init() {
 
 function ss_func() {
 	global $ss;
-
-	if ($ss->action == 'brand') {
+	
+	if (!$ss->action) {
+		$ss->print_main();
+	}
+	elseif ($ss->action == 'brand') {
 		$ss->print_brand();
 	}
 	elseif ($ss->action == 'model') {
 		if ($ss->page == 'allmodel') {
-		//if ($ss->page == 'allmodel') {
 			$ss->print_model();
 		} else {
 			$ss->print_specs();
@@ -202,6 +209,10 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
+	public $button_prev;		// Link for prev model button
+	public $button_next;		// Link for next model button
+	public $button_prevtitle;
+	public $button_nexttitle;
 
 
 
@@ -250,6 +261,38 @@ class SS {
 		$this->sensors = $result['sensors'];
 		$this->codecs = $result['codecs'];
 		$this->features = $result['features'];
+		
+		//to get current model number in the database
+		$models = $wpdb->get_results( "SELECT `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` = '$this->brand'" );
+
+		$checkmodel = 0;
+		foreach ($models as $model) {
+			if ($model->model != $this->model) {
+				$checkmodel++;
+			}
+			else {
+				$currentmodel = $checkmodel;
+			}
+		}
+
+		//to get link for prev model and next model
+		$count = $wpdb->num_rows;
+		if ($currentmodel == 0) {
+			$prevmodel = $count - 1;
+			$nextmodel = $currentmodel + 1;
+		}
+		elseif ($currentmodel == $count - 1) {
+			$prevmodel = $currentmodel - 1;
+			$nextmodel = 0;
+		}
+		else {
+			$prevmodel = $currentmodel - 1;
+			$nextmodel = $currentmodel + 1;
+		}
+		$this->button_prev = "/model/".$this->brand.'/'.$models[$prevmodel]->model.'/';
+		$this->button_next = "/model/".$this->brand.'/'.$models[$nextmodel]->model.'/';
+		$this->button_prevtitle = $models[$prevmodel]->seo_model;
+		$this->button_nexttitle = $models[$nextmodel]->seo_model;
 	}
 	
 	// Function to get title for accordion tabs in model display
@@ -311,6 +354,66 @@ class SS {
 		return $string;
 	}
 
+	// Function to print main page
+	public function print_main() {
+		/**
+		$searchstr1 = "/search/?q";
+		$searchstr2 = "mainsearch-text";
+		echo "
+		<div class='row'>
+			<br />
+			<div class='panel callout radius'>
+				<h2>Search the world of radio</h2>
+				<form action='/search/' onsubmit='location.href=$searchstr1 + document.getElementById($searchstr2).value; return false;'>
+				<div class='row'>
+					<div class='large-12 small-12 columns'>
+					<div class='small-10 columns'>
+						<input id='mainsearch-text' type='text' name='q' autocomplete='off' class='form-control input-sm ng-pristine ng-valid' placeholder='Search'>
+					</div>
+					<div class='small-2 columns'>
+						<a class='button postfix' onclick='location.href=$searchstr1 + document.getElementById($searchstr2).value;'>Go</a>
+					</div>
+					</div>
+				</div>
+				</form>
+				<br /><br />
+				<p>Search from tens of thousands of radio stations from all over the world playing only the best music from every genre.</p>
+			</div>
+		</div>
+		";
+		**/
+		echo "
+			<div class='row'>
+			<div class='small-12 columns'>
+			<div class='panel'>
+			<h5>Popular Brand</h5>
+			<br />
+			<ul class='small-block-grid-2 medium-block-grid-5'>
+				<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
+				<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
+				<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
+				<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
+				<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
+				<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
+				<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
+				<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
+				<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
+				<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
+				<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
+				<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
+				<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
+				<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
+				<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
+				<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
+				<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
+				<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
+				<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
+				<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
+			</ul>
+			</div></div></div>
+			<br />
+		";
+	}
 	
 	// Function to print all brand
 	public function print_brand() {
@@ -426,6 +529,15 @@ class SS {
 	
 		echo "
 			<hr>
+			<div class='row'>
+			<div class='small-12 columns'>
+			<div class='left'>
+			<a class='tiny button' href='$this->button_prev' title='$this->button_prevtitle'>Prev Model</a>
+			</div>
+			<div class='right'>
+			<a class='tiny button' href='$this->button_next' title='$this->button_nexttitle'>Next Model</a>
+			</div>
+			</div></div>
 			<div class='row'>
 			<div class='small-12 columns'>
 		";
