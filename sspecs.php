@@ -209,6 +209,7 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
+	public $models_arr;			// sql results for models widget and prev/next button in models page
 	public $button_prev;		// Link for prev model button
 	public $button_next;		// Link for next model button
 	public $button_prevtitle;
@@ -263,10 +264,10 @@ class SS {
 		$this->features = $result['features'];
 		
 		//to get current model number in the database
-		$models = $wpdb->get_results( "SELECT `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` = '$this->brand'" );
+		$this->models_arr = $wpdb->get_results( "SELECT `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` = '$this->brand'" );
 
 		$checkmodel = 0;
-		foreach ($models as $model) {
+		foreach ($this->models_arr as $model) {
 			if ($model->model != $this->model) {
 				$checkmodel++;
 			}
@@ -526,7 +527,7 @@ class SS {
 		if ($this->codecs) { $ss_codecs = json_decode($this->codecs, true); $accordion_title = $this->get_title($ss_codecs); $accordion_tab[] = array($accordion_title,"codecs"); }
 		if ($this->features) { $ss_features = json_decode($this->features, true); $accordion_title = $this->get_title($ss_features); $accordion_tab[] = array($accordion_title,"features"); }
 		//if ($this->specs) { $ss_specs = json_decode($this->specs, true); }
-	
+		
 		echo "
 			<hr>
 			<div class='row'>
@@ -718,7 +719,7 @@ class brand_widget extends WP_Widget {
 
 	// Display output
 		global $ss;	
-		if ($ss->action == 'brand') {
+		if ($ss->action) {
 			
 			echo "
 				<div class='row'>
@@ -773,9 +774,72 @@ class brand_widget extends WP_Widget {
 	}
 } // Class country_widget ends here
 
+// Widget to list models by brand
+// Creating the widget
+class model_widget extends WP_Widget {
+
+	function __construct() {
+		parent::__construct(
+			'model_widget', // Base ID
+			__('#Model Widget', 'text_domain'), // Widget name
+			array( 'description' => __( 'Secret Specs widget to list models by brand', 'text_domain' ), ) // Widget description
+		);
+	}
+
+// Front-end
+	public function widget( $args, $instance ) {
+		$title = apply_filters( 'widget_title', $instance['title'] );
+
+// Before and after widget arguments are defined by themes
+		echo $args['before_widget'];
+		if ( ! empty( $title ) )
+		echo $args['before_title'] .'<h5>'. $title .'</h5>'. $args['after_title'];
+
+// Display output
+		global $ss;
+		
+		if (($ss->action == 'model') && ($ss->brand) && ($ss->models_arr)) {
+			echo "
+				<div class='row'>
+				<div class='small-12 columns'>
+				<div class='panel'>
+				<h5>$ss->brand</h5>
+				<br />
+			";
+			foreach ($ss->models_arr as $model) {
+				echo "<a href='/model/$ss->brand/$model->model/'>$model->seo_model</a><br />";
+			}
+			echo "
+				</div></div></div>
+				<br />
+			";
+		}
+		echo $args['after_widget'];
+	}
+
+// Backend
+	public function form( $instance ) {
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = __( 'New title', 'text_domain' );
+		}
+// Admin Form
+		?>
+		<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
+		<?php
+	}
+} // Class model_widget ends here
+
+
 // Register and load the widget
 function load_widget() {
     register_widget( 'brand_widget' );
+    register_widget( 'model_widget' );
 }
 
 
