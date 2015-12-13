@@ -290,8 +290,8 @@ class SS {
 			$prevmodel = $currentmodel - 1;
 			$nextmodel = $currentmodel + 1;
 		}
-		$this->button_prev = "/model/".$this->brand.'/'.$models[$prevmodel]->model.'/';
-		$this->button_next = "/model/".$this->brand.'/'.$models[$nextmodel]->model.'/';
+		$this->button_prev = "/model/".$this->brand."/".$this->models_arr[$prevmodel]->model."/";
+		$this->button_next = "/model/".$this->brand."/".$this->models_arr[$nextmodel]->model."/";
 		$this->button_prevtitle = $models[$prevmodel]->seo_model;
 		$this->button_nexttitle = $models[$nextmodel]->seo_model;
 	}
@@ -319,7 +319,6 @@ class SS {
 			$temptitle = "";
 			foreach ($arr_field as $value) {
 				if ($value[0] == "subtitle") {
-					//$string .= " (".$value[1].")</b></div>";
 					$temptitle = ""; // First title in the field is field name so it should be ignored for <hr> tag below which checks for title
 					$checktitle = false;
 				}
@@ -458,16 +457,6 @@ class SS {
 					echo "<a href=$brand->brand/>$brand->seo_brand ($current_count)</a>";
 					echo "</div>";
 				}
-				/**
-				if ($brand->brand != $dup_brand) {
-					$dup_brand = $brand->brand;
-					$i++;
-					if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
-					else { echo "<div class='small-12 medium-6 columns end'>"; }
-					echo "<a href=$brand->brand/>$brand->seo_brand</a>";
-					echo "</div>";
-				}
-				**/
 			// List models for selected brand
 			} else {
 				$i++;
@@ -482,17 +471,6 @@ class SS {
 	
 	public function print_model() {
 		echo "
-			<ul class='pagination right'>
-				<li class='arrow unavailable'><a href=''>&laquo;</a></li>
-				<li class='current'><a href=''>1</a></li>
-				<li><a href=''>2</a></li>
-				<li><a href=''>3</a></li>
-				<li><a href=''>4</a></li>
-				<li class='unavailable'><a href=''>&hellip;</a></li>
-				<li><a href=''>12</a></li>
-				<li><a href=''>13</a></li>
-				<li class='arrow'><a href=''>&raquo;</a></li>
-			</ul>
 			<hr>
 			<div class='row'>
 			<div class='small-12 columns'>
@@ -565,7 +543,6 @@ class SS {
 			<li class='accordion-navigation'>
 			<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
 			";
-			//if ($this->specs == $tab[1]) {
 			if ($tab[1] == 'system') {
 				echo "<div id=$tab[1] class='content active' role='tabpanel'>";
 			}
@@ -582,8 +559,6 @@ class SS {
 	function flatten_array($arr) {
 		if (!$results) {
 			$results = array();
-			//global $title_counter;
-			//$title_counter = 0;
 		}
 		if (is_array($arr)) {
 			$storekey = "";
