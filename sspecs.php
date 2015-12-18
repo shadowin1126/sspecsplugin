@@ -160,6 +160,11 @@ function ss_seo_loader_init() {
 		add_filter( 'wp_title', 'ss_title', 10, 2);
 		add_action( 'wp_head', 'ss_seo_meta', 1);
 	}
+	// Main page
+	elseif (!$ss->action) {
+		$ss->query = 'SELECT `model`.`model`, `model`.`seo_model`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` ORDER BY RAND() LIMIT 20;';
+		$ss->get_random();
+	}
 
 }
 
@@ -223,6 +228,11 @@ class SS {
 		$this->seo_keywords = '';
 	}
 	
+	// SQL query for random models
+	public function get_random() {
+		global $wpdb;
+		$this->get_random = $wpdb->get_results($this->query);
+	}
 
 	// SQL query for selected brand
 	public function get_brand() {
@@ -385,31 +395,44 @@ class SS {
 		echo "
 			<div class='row'>
 			<div class='small-12 columns'>
-			<div class='panel'>
-			<h5>Popular Brand</h5>
-			<br />
-			<ul class='small-block-grid-2 medium-block-grid-5'>
-				<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
-				<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
-				<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
-				<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
-				<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
-				<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
-				<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
-				<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
-				<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
-				<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
-				<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
-				<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
-				<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
-				<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
-				<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
-				<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
-				<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
-				<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
-				<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
-				<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
-			</ul>
+				<div class='row'>
+				<div class='small-12 medium-6 columns'>
+					<h4>Popular Brands</h4>
+					<hr>
+					<h5 class='subheader'>
+					<a href='/brand/acer/'>Acer</a><br />
+					<a href='/brand/asus/'>Asus</a><br />
+					<a href='/brand/casio/'>Casio</a><br />
+					<a href='/brand/celkon/'>Celkon</a><br />
+					<a href='/brand/gigabyte/'>Gigabyte</a><br />
+					<a href='/brand/huawei/'>Huawei</a><br />
+					<a href='/brand/htc/'>HTC</a><br />
+					<a href='/brand/lenovo/'>Lenovo</a><br />
+					<a href='/brand/lg/'>LG</a><br />
+					<a href='/brand/maxwest/'>Maxwest</a><br />
+					<a href='/brand/micromax/'>Micromax</a><br />
+					<a href='/brand/motorola/'>Motorola</a><br />
+					<a href='/brand/oppo/'>Oppo</a><br />
+					<a href='/brand/pantech/'>Pantech</a><br />
+					<a href='/brand/samsung/'>Samsung</a><br />
+					<a href='/brand/sony/'>Sony</a><br />
+					<a href='/brand/spice/'>Spice</a><br />
+					<a href='/brand/toshiba/'>Toshiba</a><br />
+					<a href='/brand/xiaomi/'>Xiaomi</a><br />
+					<a href='/brand/zte/'>ZTE</a><br />
+					</h5>
+				</div>
+				<div class='small-12 medium-6 columns'>
+					<h4>Random Models</h4>
+					<hr>
+					<h5 class='subheader'>
+		";
+		foreach ($this->get_random as $row) {
+			echo "<a href='/model/$row->brand/$row->model'/'>$row->seo_model</a><br />";
+		}
+		echo "
+					</h5>
+				</div>
 			</div></div></div>
 			<br />
 		";
@@ -700,7 +723,7 @@ class brand_widget extends WP_Widget {
 				<div class='row'>
 				<div class='small-12 columns'>
 				<div class='panel'>
-				<h5>Popular Brand</h5>
+				<h5>Popular Brands</h5>
 				<br />
 				<ul class='small-block-grid-2'>
 					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
