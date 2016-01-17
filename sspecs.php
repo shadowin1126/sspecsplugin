@@ -28,7 +28,7 @@ function ss_seo_meta() {
 	foreach (array($keywords) as $keyword) {
 		$seo_keywords .= $keyword.', ';
 	}
-	$seo_keywords .= 'Intel ss, ss Map, ss Portal, Guardian Portal';
+	$seo_keywords .= 'mobile, phone, cellphone, Samsung, Sony Ericsson, Motorola, Acer, Alcatel, Asus, Casio, Gigabyte, Huawei, HTC, LG, Oppo, Toshiba, Xiaomi, hardware, specifications, specs, information, info';
 
 	$ss_seo = '
 <!-- ss SEO -->
@@ -124,8 +124,23 @@ function ss_seo_loader_init() {
 	// Model page
 	elseif ($ss->action == 'model') {
 	
+		// List secret codes of selected model
+		if (($path[4]) && ($path[4] == 'secret-code')) {
+			$ss->page = 'secret';
+			
+			// Set the current brand
+			$ss->brand = $path[2];
+			
+			$ss->model = $path[3];
+			
+			// Get the secret code
+			$ss->query2 = 'SELECT `seo_model` FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
+			$ss->query = 'SELECT `brand`.`brand`, `secret`.`code`, `secret`.`remarks` FROM `secret` JOIN `brand` ON `secret`.`brandid` = `brand`.`brandid`;';
+			$ss->get_secret();
+		}
+		
 		// List specs of selected model
-		if ($path[2]) {
+		elseif ($path[2]) {
 			
 			// Set the current brand (for prev and next button purposes)
 			$ss->brand = $path[2];
@@ -171,6 +186,25 @@ function ss_seo_loader_init() {
 function ss_func() {
 	global $ss;
 	
+	?>
+	<!-- Ads -->
+	<div class="row">
+		<div class="small-12 columns">
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<!-- secretspecs-top -->
+			<ins class="adsbygoogle"
+				 style="display:block"
+				 data-ad-client="ca-pub-0047723350429793"
+				 data-ad-slot="7551038658"
+				 data-ad-format="auto"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+	</div>
+	<br />
+	<?php
+	
 	if (!$ss->action) {
 		$ss->print_main();
 	}
@@ -178,12 +212,34 @@ function ss_func() {
 		$ss->print_brand();
 	}
 	elseif ($ss->action == 'model') {
-		if ($ss->page == 'allmodel') {
+		if ($ss->page == 'secret') {
+			$ss->print_secret();
+		}
+		elseif ($ss->page == 'allmodel') {
 			$ss->print_model();
 		} else {
 			$ss->print_specs();
 		}
 	}
+	
+	?>
+	<!-- Ads -->
+	<br />
+	<div class="row">
+		<div class="small-12 columns">
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<!-- secretspecs-bottom -->
+			<ins class="adsbygoogle"
+				 style="display:block"
+				 data-ad-client="ca-pub-0047723350429793"
+				 data-ad-slot="1504505059"
+				 data-ad-format="auto"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+	</div>
+	<?php
 }
 
 
@@ -195,6 +251,7 @@ class SS {
 	public $seo_desc;
 	public $seo_keywords;
 	public $query;
+	public $query2;				// second query on secret codes page to get model name
 	public $brand;
 	public $get_brand;
 	public $get_model;
@@ -214,7 +271,9 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
-	public $models_arr;			// sql results for models widget and prev/next button in models page
+	public $models_arr;			// sql results for models widget and prev/next button in model page
+	public $model_count;		// model count for models widget and prev/next button in model page
+	public $model_current;		// current model for models widget and prev/next button in model page
 	public $button_prev;		// Link for prev model button
 	public $button_next;		// Link for next model button
 	public $button_prevtitle;
@@ -239,9 +298,15 @@ class SS {
 		global $wpdb;
 		$this->get_brand = $wpdb->get_results($this->query);
 		
-		// Set page title
-		if ($this->get_brand[0]->modelid) { $this->seo_title = $this->get_brand[0]->seo_brand; }
-		else { $this->seo_title = 'Brand'; }
+		// Set page title and description
+		if ($this->get_brand[0]->modelid) {
+			$this->seo_title = $this->get_brand[0]->seo_brand;
+			$this->seo_desc = $this->get_brand[0]->seo_brand.' devices full specifications, in-depth hardware informations and secret codes.';
+		}
+		else {
+			$this->seo_title = 'Brand';
+			$this->seo_desc = 'Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.';
+		}
 	}
 
 	// SQL query to list all models
@@ -249,7 +314,10 @@ class SS {
 		global $wpdb;
 		
 		$this->get_model = $wpdb->get_results($this->query);
-		$this->seo_title = 'Models';
+		
+		// Set page title and description
+		$this->seo_title = 'Model';
+		$this->seo_desc = 'Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.';
 	}
 
 	// SQL query for selected model
@@ -258,6 +326,7 @@ class SS {
 
 		$result = $wpdb->get_row($this->query, ARRAY_A);
 		$this->seo_title = $result['seo_model'];
+		$this->seo_desc = $result['seo_model'].' full specifications, in-depth hardware informations and secret codes.';
 		$this->system = $result['system'];
 		$this->display = $result["display"];
 		$this->processor = $result['processor'];
@@ -282,28 +351,44 @@ class SS {
 				$checkmodel++;
 			}
 			else {
-				$currentmodel = $checkmodel;
+				$this->model_current = $checkmodel;
 			}
 		}
 
 		//to get link for prev model and next model
-		$count = $wpdb->num_rows;
-		if ($currentmodel == 0) {
-			$prevmodel = $count - 1;
-			$nextmodel = $currentmodel + 1;
+		$this->model_count = $wpdb->num_rows;
+		if ($this->model_count == 1) {	// When there is only one model for this brand
+			$prevmodel = 0;
+			$nextmodel = 0;
 		}
-		elseif ($currentmodel == $count - 1) {
-			$prevmodel = $currentmodel - 1;
+		elseif ($this->model_current == 0) {
+			$prevmodel = $this->model_count - 1;
+			$nextmodel = $this->model_current + 1;
+		}
+		elseif ($this->model_current == $this->model_count - 1) {
+			$prevmodel = $this->model_current - 1;
 			$nextmodel = 0;
 		}
 		else {
-			$prevmodel = $currentmodel - 1;
-			$nextmodel = $currentmodel + 1;
+			$prevmodel = $this->model_current - 1;
+			$nextmodel = $this->model_current + 1;
 		}
 		$this->button_prev = "/model/".$this->brand."/".$this->models_arr[$prevmodel]->model."/";
 		$this->button_next = "/model/".$this->brand."/".$this->models_arr[$nextmodel]->model."/";
 		$this->button_prevtitle = $models[$prevmodel]->seo_model;
 		$this->button_nexttitle = $models[$nextmodel]->seo_model;
+	}
+	
+	// SQL query for secret code
+	public function get_secret() {
+		global $wpdb;
+		
+		$this->get_model = $wpdb->get_row($this->query2);
+		$this->get_secret = $wpdb->get_results($this->query);
+		
+		// Set page title and description
+		$this->seo_title = $this->get_model->seo_model.' - Secret Code';
+		$this->seo_desc = 'Access hidden info on your '.$this->get_model->seo_model.' with these secret codes that hold a large amount of information about its hardware and software.';
 	}
 	
 	// Function to get title for accordion tabs in model display
@@ -540,6 +625,7 @@ class SS {
 			<a class='tiny button' href='$this->button_next' title='$this->button_nexttitle'>Next Model</a>
 			</div>
 			</div></div>
+			<a href='/model/$this->brand/$this->model/secret-code/'>Secret Code</a><br />
 			<div class='row'>
 			<div class='small-12 columns'>
 		";
@@ -577,6 +663,69 @@ class SS {
 		}
 		echo '</ul>';
 		echo "</div></div>";
+	}
+	
+	public function print_secret() {
+		echo "
+			<hr>
+			<div class='row'>
+			<div class='small-12 columns'>
+			<div class='row'>
+		";
+		
+		// List all generic secret codes
+		echo "
+			<div class='small-12 columns'>
+			<h4>Generic Secret Codes</h4>
+			</div>
+			<div class='small-6 medium-5 columns'>
+			<b><u>Secret Code</u></b>
+			</div>
+			<div class='small-6 medium-7 columns'>
+			<b><u>Description</u></b>
+			</div>
+		";
+		$checkbrand = "";
+		foreach ($this->get_secret as $secret) {
+			if ($secret->brand == 'generic') {
+				echo "<div class='small-6 medium-5 columns'>";
+				echo $secret->code;
+				echo "</div>";
+				echo "<div class='small-6 medium-7 columns'>";
+				echo $secret->remarks;
+				echo "</div>";
+			}
+			if ($secret->brand == $this->brand) {		// To check whether there are secret codes for this brand
+				$checkbrand = true;
+			}
+		}
+		if ($checkbrand) {
+		
+			// List all secret codes for this brand
+			echo "
+				<br />
+				<div class='small-12 columns'>
+				<h4>$this->brand Secret Codes</h4>
+				</div>
+				<div class='small-6 medium-5 columns'>
+				<b><u>Secret Code</u></b>
+				</div>
+				<div class='small-6 medium-7 columns'>
+				<b><u>Description</u></b>
+				</div>
+			";
+			foreach ($this->get_secret as $secret) {
+				if ($secret->brand == $this->brand) {
+					echo "<div class='small-6 medium-5 columns'>";
+					echo $secret->code;
+					echo "</div>";
+					echo "<div class='small-6 medium-7 columns'>";
+					echo $secret->remarks;
+					echo "</div>";
+				}
+			}
+		}
+		echo "</div></div></div>";
 	}
 
 	function flatten_array($arr) {
@@ -804,9 +953,53 @@ class model_widget extends WP_Widget {
 				<h5>$ss->brand</h5>
 				<br />
 			";
+			if ($ss->model_count <= 10) {	// When there are not more than 10 models for this brand
+				foreach ($ss->models_arr as $model) {
+					echo "<a href='/model/$ss->brand/$model->model/'>$model->seo_model</a><br />";
+				}
+			}
+			elseif ($ss->model_current < 5) {	// When the current model is within the first 5 in the list
+				for ($i = 0; $i < 10; $i++) {
+					$model = $ss->models_arr[$i]->model;
+					$seo_model = $ss->models_arr[$i]->seo_model;
+					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+				}
+			}
+			elseif ((($ss->model_count) - $ss->model_current) < 5) {	// When the current model is within the last 5 in the list
+				for ($i = $ss->model_count - 10; $i < $ss->model_count; $i++) {
+					$model = $ss->models_arr[$i]->model;
+					$seo_model = $ss->models_arr[$i]->seo_model;
+					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+				}
+			}
+			else {
+				// Display 5 models before current
+				for ($i = $ss->model_current - 5; $i < $ss->model_current; $i++) {
+					$model = $ss->models_arr[$i]->model;
+					$seo_model = $ss->models_arr[$i]->seo_model;
+					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+				}
+				// Display 5 models after current
+				for ($i = $ss->model_current + 1; $i < $ss->model_current + 6; $i++) {
+					$model = $ss->models_arr[$i]->model;
+					$seo_model = $ss->models_arr[$i]->seo_model;
+					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+				}
+			}
+			/**
+			elseif ($this->model_current == $this->model_count - 1) {
+				$prevmodel = $this->model_current - 1;
+				$nextmodel = 0;
+			}
+			else {
+				$prevmodel = $this->model_current - 1;
+				$nextmodel = $this->model_current + 1;
+			}
+			
 			foreach ($ss->models_arr as $model) {
 				echo "<a href='/model/$ss->brand/$model->model/'>$model->seo_model</a><br />";
 			}
+			**/
 			echo "
 				</div></div></div>
 				<br />
