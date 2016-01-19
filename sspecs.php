@@ -544,7 +544,7 @@ class SS {
 				$i++;
 				if ($i < $array_count) {
 					if ($brand->brand != $dup_brand) {
-						echo "<div class='small-12 medium-6 columns'>";
+						echo "<div class='small-12 medium-6 columns' style='height:25pt'>";
 						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
 						echo "</div>";
 						$dup_brand = $brand->brand;
@@ -556,20 +556,20 @@ class SS {
 					$current_seobrand = $brand->seo_brand;
 				} else {
 					if ($brand->brand != $dup_brand) {
-						echo "<div class='small-12 medium-6 columns'>";
+						echo "<div class='small-12 medium-6 columns' style='height:25pt'>";
 						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
 						echo "</div>";
 						$current_count = 1;
 					}
-					echo "<div class='small-12 medium-6 columns end'>";
+					echo "<div class='small-12 medium-6 columns end' style='height:25pt'>";
 					echo "<a href=$brand->brand/>$brand->seo_brand ($current_count)</a>";
 					echo "</div>";
 				}
 			// List models for selected brand
 			} else {
 				$i++;
-				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
-				else { echo "<div class='small-12 medium-6 columns end'>"; }
+				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns' style='height:25pt'>"; }
+				else { echo "<div class='small-12 medium-6 columns end' style='height:25pt'>"; }
 				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
 				echo "</div>";
 			}
@@ -589,8 +589,8 @@ class SS {
 		foreach ($this->get_model as $model) {
 			// List all models
 			$i++;
-			if ($i < $array_count) { echo "<div class='small-12 medium-6 columns'>"; }
-			else { echo "<div class='small-12 medium-6 columns end'>"; }
+			if ($i < $array_count) { echo "<div class='small-12 medium-6 columns' style='height:25pt'>"; }
+			else { echo "<div class='small-12 medium-6 columns end' style='height:25pt'>"; }
 			echo "<a href=$model->brand/$model->model/>$model->seo_model</a>";
 			echo "</div>";
 		}
@@ -625,7 +625,8 @@ class SS {
 			<a class='tiny button' href='$this->button_next' title='$this->button_nexttitle'>Next Model</a>
 			</div>
 			</div></div>
-			<a href='/model/$this->brand/$this->model/secret-code/'>Secret Code</a><br />
+			<br>
+			<a class='button secondary' href='/model/$this->brand/$this->model/secret-code/'>Secret Codes for $this->seo_title</a><br />
 			<div class='row'>
 			<div class='small-12 columns'>
 		";
@@ -676,24 +677,17 @@ class SS {
 		// List all generic secret codes
 		echo "
 			<div class='small-12 columns'>
-			<h4>Generic Secret Codes</h4>
-			</div>
-			<div class='small-6 medium-5 columns'>
-			<b><u>Secret Code</u></b>
-			</div>
-			<div class='small-6 medium-7 columns'>
-			<b><u>Description</u></b>
+			<h3>Generic Secret Codes</h3>
 			</div>
 		";
 		$checkbrand = "";
 		foreach ($this->get_secret as $secret) {
 			if ($secret->brand == 'generic') {
-				echo "<div class='small-6 medium-5 columns'>";
-				echo $secret->code;
-				echo "</div>";
-				echo "<div class='small-6 medium-7 columns'>";
+				echo "<div class='small-12 columns'>";
+				echo "<div class='panel'>";
+				echo "<h5><strong>".$secret->code."</strong></h5>";
 				echo $secret->remarks;
-				echo "</div>";
+				echo "</div></div>";
 			}
 			if ($secret->brand == $this->brand) {		// To check whether there are secret codes for this brand
 				$checkbrand = true;
@@ -702,26 +696,20 @@ class SS {
 		if ($checkbrand) {
 		
 			// List all secret codes for this brand
+			$brand = ucwords($this->brand);
 			echo "
 				<br />
 				<div class='small-12 columns'>
-				<h4>$this->brand Secret Codes</h4>
-				</div>
-				<div class='small-6 medium-5 columns'>
-				<b><u>Secret Code</u></b>
-				</div>
-				<div class='small-6 medium-7 columns'>
-				<b><u>Description</u></b>
+				<h3>$brand Secret Codes</h3>
 				</div>
 			";
 			foreach ($this->get_secret as $secret) {
 				if ($secret->brand == $this->brand) {
-					echo "<div class='small-6 medium-5 columns'>";
-					echo $secret->code;
-					echo "</div>";
-					echo "<div class='small-6 medium-7 columns'>";
+					echo "<div class='small-12 columns'>";
+					echo "<div class='panel'>";
+					echo "<h5><strong>".$secret->code."</strong></h5>";
 					echo $secret->remarks;
-					echo "</div>";
+					echo "</div></div>";
 				}
 			}
 		}
