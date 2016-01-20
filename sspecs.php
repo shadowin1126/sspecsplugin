@@ -373,10 +373,10 @@ class SS {
 			$prevmodel = $this->model_current - 1;
 			$nextmodel = $this->model_current + 1;
 		}
-		$this->button_prev = "/model/".$this->brand."/".$this->models_arr[$prevmodel]->model."/";
-		$this->button_next = "/model/".$this->brand."/".$this->models_arr[$nextmodel]->model."/";
-		$this->button_prevtitle = $models[$prevmodel]->seo_model;
-		$this->button_nexttitle = $models[$nextmodel]->seo_model;
+		$this->button_prev = "//secretspecs.com/model/".$this->brand."/".$this->models_arr[$prevmodel]->model."/";
+		$this->button_next = "//secretspecs.com/model/".$this->brand."/".$this->models_arr[$nextmodel]->model."/";
+		$this->button_prevtitle = $this->models_arr[$prevmodel]->seo_model;
+		$this->button_nexttitle = $this->models_arr[$nextmodel]->seo_model;
 	}
 	
 	// SQL query for secret code
@@ -477,47 +477,47 @@ class SS {
 		</div>
 		";
 		**/
-		echo "
-			<div class='row'>
-			<div class='small-12 columns'>
-				<div class='row'>
-				<div class='small-12 medium-6 columns'>
+		echo '
+			<div class="row">
+			<div class="small-12 columns">
+				<div class="row">
+				<div class="small-12 medium-6 columns">
 					<h4>Popular Brands</h4>
 					<hr>
-					<h5 class='subheader'>
-					<a href='/brand/acer/'>Acer</a><br />
-					<a href='/brand/asus/'>Asus</a><br />
-					<a href='/brand/casio/'>Casio</a><br />
-					<a href='/brand/celkon/'>Celkon</a><br />
-					<a href='/brand/gigabyte/'>Gigabyte</a><br />
-					<a href='/brand/huawei/'>Huawei</a><br />
-					<a href='/brand/htc/'>HTC</a><br />
-					<a href='/brand/lenovo/'>Lenovo</a><br />
-					<a href='/brand/lg/'>LG</a><br />
-					<a href='/brand/maxwest/'>Maxwest</a><br />
-					<a href='/brand/micromax/'>Micromax</a><br />
-					<a href='/brand/motorola/'>Motorola</a><br />
-					<a href='/brand/oppo/'>Oppo</a><br />
-					<a href='/brand/pantech/'>Pantech</a><br />
-					<a href='/brand/samsung/'>Samsung</a><br />
-					<a href='/brand/sony/'>Sony</a><br />
-					<a href='/brand/spice/'>Spice</a><br />
-					<a href='/brand/toshiba/'>Toshiba</a><br />
-					<a href='/brand/xiaomi/'>Xiaomi</a><br />
-					<a href='/brand/zte/'>ZTE</a><br />
+					<h5 class="subheader">
+					<a href="//secretspecs.com/brand/acer/" title="Acer">Acer</a><br />
+					<a href="//secretspecs.com/brand/asus/" title="Asus">Asus</a><br />
+					<a href="//secretspecs.com/brand/casio/" title ="Casio">Casio</a><br />
+					<a href="//secretspecs.com/brand/celkon/" title="Celkon">Celkon</a><br />
+					<a href="//secretspecs.com/brand/gigabyte/" title="Gigabyte">Gigabyte</a><br />
+					<a href="//secretspecs.com/brand/huawei/" title="Huawei">Huawei</a><br />
+					<a href="//secretspecs.com/brand/htc/" title="HTC">HTC</a><br />
+					<a href="//secretspecs.com/brand/lenovo/" title="Lenovo">Lenovo</a><br />
+					<a href="//secretspecs.com/brand/lg/" title="LG">LG</a><br />
+					<a href="//secretspecs.com/brand/maxwest/" title="Maxwest">Maxwest</a><br />
+					<a href="//secretspecs.com/brand/micromax/" title="Micromax">Micromax</a><br />
+					<a href="//secretspecs.com/brand/motorola/" title="Motorola">Motorola</a><br />
+					<a href="//secretspecs.com/brand/oppo/" title="Oppo">Oppo</a><br />
+					<a href="//secretspecs.com/brand/pantech/" title="Pantech">Pantech</a><br />
+					<a href="//secretspecs.com/brand/samsung/" title="Samsung">Samsung</a><br />
+					<a href="//secretspecs.com/brand/sony/" title="Sony">Sony</a><br />
+					<a href="//secretspecs.com/brand/spice/" title="Spice">Spice</a><br />
+					<a href="//secretspecs.com/brand/toshiba/" title="Toshiba">Toshiba</a><br />
+					<a href="//secretspecs.com/brand/xiaomi/" title="Xiaomi">Xiaomi</a><br />
+					<a href="//secretspecs.com/brand/zte/" title="ZTE">ZTE</a><br />
 					</h5>
 				</div>
-				<div class='small-12 medium-6 columns'>
+				<div class="small-12 medium-6 columns">
 					<h4>Random Models</h4>
 					<hr>
-					<h5 class='subheader'>
-		";
+					<h5 class="subheader">
+		';
 		foreach ($this->get_random as $row) {
-			echo "<a href='/model/$row->brand/$row->model'/'>$row->seo_model</a><br />";
+			echo "<a href=\"//secretspecs.com/model/$row->brand/$row->model/\" title=\"$row->seo_model\">$row->seo_model</a><br />";
 		}
 		echo "
-					</h5>
-				</div>
+			</h5>
+			</div>
 			</div></div></div>
 			<br />
 		";
@@ -527,9 +527,9 @@ class SS {
 	public function print_brand() {
 		echo "
 			<hr>
-			<div class='row'>
-			<div class='small-12 columns'>
-			<div class='row'>
+			<div class=\"row\">
+			<div class=\"small-12 columns\">
+			<div class=\"row\">
 		";
 		
 		$dup_brand = $this->get_brand[0]->brand;	// To get distinct brand
@@ -544,8 +544,8 @@ class SS {
 				$i++;
 				if ($i < $array_count) {
 					if ($brand->brand != $dup_brand) {
-						echo "<div class='small-12 medium-6 columns' style='height:25pt'>";
-						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
+						echo "<div class=\"small-12 medium-6 columns\" style=\"height:25pt\">";
+						echo "<a href=\"//secretspecs.com/brand/$current_brand/\" title=\"$current_seobrand\">$current_seobrand ($current_count)</a>";
 						echo "</div>";
 						$dup_brand = $brand->brand;
 						$current_count = 1;
@@ -556,21 +556,21 @@ class SS {
 					$current_seobrand = $brand->seo_brand;
 				} else {
 					if ($brand->brand != $dup_brand) {
-						echo "<div class='small-12 medium-6 columns' style='height:25pt'>";
-						echo "<a href=$current_brand/>$current_seobrand ($current_count)</a>";
+						echo "<div class=\"small-12 medium-6 columns\" style=\"height:25pt\">";
+						echo "<a href=\"//secretspecs.com/brand/$current_brand/\" title=\"$current_seobrand\">$current_seobrand ($current_count)</a>";
 						echo "</div>";
 						$current_count = 1;
 					}
-					echo "<div class='small-12 medium-6 columns end' style='height:25pt'>";
-					echo "<a href=$brand->brand/>$brand->seo_brand ($current_count)</a>";
+					echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">";
+					echo "<a href=\"//secretspecs.com/brand/$brand->brand/\" title=\"$brand->seo_brand\">$brand->seo_brand ($current_count)</a>";
 					echo "</div>";
 				}
 			// List models for selected brand
 			} else {
 				$i++;
-				if ($i < $array_count) { echo "<div class='small-12 medium-6 columns' style='height:25pt'>"; }
-				else { echo "<div class='small-12 medium-6 columns end' style='height:25pt'>"; }
-				echo "<a href=/../model/$brand->brand/$brand->model/>$brand->seo_model</a>";
+				if ($i < $array_count) { echo "<div class=\"small-12 medium-6 columns\" style=\"height:25pt\">"; }
+				else { echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">"; }
+				echo "<a href=\"//secretspecs.com/model/$brand->brand/$brand->model/\" title=\"$brand->seo_model\">$brand->seo_model</a>";
 				echo "</div>";
 			}
 		}
@@ -580,18 +580,18 @@ class SS {
 	public function print_model() {
 		echo "
 			<hr>
-			<div class='row'>
-			<div class='small-12 columns'>
-			<div class='row'>
+			<div class=\"row\">
+			<div class=\"small-12 columns\">
+			<div class=\"row\">
 		";
 		$array_count = COUNT($this->get_model);	// To check for last
 		$i = 0;									// item in array
 		foreach ($this->get_model as $model) {
 			// List all models
 			$i++;
-			if ($i < $array_count) { echo "<div class='small-12 medium-6 columns' style='height:25pt'>"; }
-			else { echo "<div class='small-12 medium-6 columns end' style='height:25pt'>"; }
-			echo "<a href=$model->brand/$model->model/>$model->seo_model</a>";
+			if ($i < $array_count) { echo "<div class=\"small-12 medium-6 columns\" style=\"height:25pt\">"; }
+			else { echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">"; }
+			echo "<a href=\"//secretspecs.com/model/$model->brand/$model->model/\" title=\"$model->seo_model\">$model->seo_model</a>";
 			echo "</div>";
 		}
 		echo "</div></div></div>";
@@ -616,23 +616,23 @@ class SS {
 		
 		echo "
 			<hr>
-			<div class='row'>
-			<div class='small-12 columns'>
-			<div class='left'>
-			<a class='tiny button' href='$this->button_prev' title='$this->button_prevtitle'>Prev Model</a>
+			<div class=\"row\">
+			<div class=\"small-12 columns\">
+			<div class=\"left\">
+			<a class=\"tiny button\" href=\"$this->button_prev\" title=\"$this->button_prevtitle\">Prev Model</a>
 			</div>
-			<div class='right'>
-			<a class='tiny button' href='$this->button_next' title='$this->button_nexttitle'>Next Model</a>
+			<div class=\"right\">
+			<a class=\"tiny button\" href=\"$this->button_next\" title=\"$this->button_nexttitle\">Next Model</a>
 			</div>
 			</div></div>
 			<br>
-			<a class='button secondary' href='/model/$this->brand/$this->model/secret-code/'>Secret Codes for $this->seo_title</a><br />
-			<div class='row'>
-			<div class='small-12 columns'>
+			<a class=\"button secondary\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_title\">Secret Codes for $this->seo_title</a><br />
+			<div class=\"row\">
+			<div class=\"small-12 columns\">
 		";
 
 		// Display specs in accordion
-		echo '<ul class="accordion" data-accordion>';
+		echo "<ul class=\"accordion\" data-accordion>";
 		foreach ($accordion_tab as $tab) {
 			$link = '#'.$tab[1];
 			if ($tab[1] == 'system') { $accordion = $this->get_modelspecs($ss_system, 6, 6, 3, 9); }
@@ -650,41 +650,41 @@ class SS {
 			if ($tab[1] == 'codecs') { $accordion = $this->get_modelspecs($ss_codecs, 6, 6, 4, 8); }
 			if ($tab[1] == 'features') { $accordion = $this->get_modelspecs($ss_features, 6, 6, 4, 8); }
 			echo "
-			<li class='accordion-navigation'>
-			<a href=$link role='tab' aria-controls=$tab[1]>$tab[0]</a>
+			<li class=\"accordion-navigation\">
+			<a href=$link role=\"tab\" aria-controls=$tab[1]>$tab[0]</a>
 			";
 			if ($tab[1] == 'system') {
-				echo "<div id=$tab[1] class='content active' role='tabpanel'>";
+				echo "<div id=$tab[1] class=\"content active\" role=\"tabpanel\">";
 			}
 			else {
 				echo "
-			<div id=$tab[1] class='content' role='tabpanel'>";
+			<div id=$tab[1] class=\"content\" role=\"tabpanel\">";
 			}
 			echo "$accordion</div></li>";
 		}
-		echo '</ul>';
+		echo "</ul>";
 		echo "</div></div>";
 	}
 	
 	public function print_secret() {
 		echo "
 			<hr>
-			<div class='row'>
-			<div class='small-12 columns'>
-			<div class='row'>
+			<div class=\"row\">
+			<div class=\"small-12 columns\">
+			<div class=\"row\">
 		";
 		
 		// List all generic secret codes
 		echo "
-			<div class='small-12 columns'>
+			<div class=\"small-12 columns\">
 			<h3>Generic Secret Codes</h3>
 			</div>
 		";
 		$checkbrand = "";
 		foreach ($this->get_secret as $secret) {
 			if ($secret->brand == 'generic') {
-				echo "<div class='small-12 columns'>";
-				echo "<div class='panel'>";
+				echo "<div class=\"small-12 columns\">";
+				echo "<div class=\"panel\">";
 				echo "<h5><strong>".$secret->code."</strong></h5>";
 				echo $secret->remarks;
 				echo "</div></div>";
@@ -699,14 +699,14 @@ class SS {
 			$brand = ucwords($this->brand);
 			echo "
 				<br />
-				<div class='small-12 columns'>
+				<div class=\"small-12 columns\">
 				<h3>$brand Secret Codes</h3>
 				</div>
 			";
 			foreach ($this->get_secret as $secret) {
 				if ($secret->brand == $this->brand) {
-					echo "<div class='small-12 columns'>";
-					echo "<div class='panel'>";
+					echo "<div class=\"small-12 columns\">";
+					echo "<div class=\"panel\">";
 					echo "<h5><strong>".$secret->code."</strong></h5>";
 					echo $secret->remarks;
 					echo "</div></div>";
@@ -857,32 +857,32 @@ class brand_widget extends WP_Widget {
 		if ($ss->action) {
 			
 			echo "
-				<div class='row'>
-				<div class='small-12 columns'>
-				<div class='panel'>
+				<div class=\"row\">
+				<div class=\"small-12 columns\">
+				<div class=\"panel\">
 				<h5>Popular Brands</h5>
 				<br />
-				<ul class='small-block-grid-2'>
-					<li><a href='/brand/htc/'><img src='/../wp-content/uploads/brand/htc.gif' alt='htc'></a></li>
-					<li><a href='/brand/samsung/'><img src='/../wp-content/uploads/brand/samsung.gif' alt='samsung'></a></li>
-					<li><a href='/brand/lg/'><img src='/../wp-content/uploads/brand/lg.gif' alt='lg'></a></li>
-					<li><a href='/brand/xiaomi/'><img src='/../wp-content/uploads/brand/xiaomi.gif' alt='xiaomi'></a></li>
-					<li><a href='/brand/asus/'><img src='/../wp-content/uploads/brand/asus.gif' alt='asus'></a></li>
-					<li><a href='/brand/sony/'><img src='/../wp-content/uploads/brand/sony.gif' alt='sony'></a></li>
-					<li><a href='/brand/acer/'><img src='/../wp-content/uploads/brand/acer.gif' alt='acer'></a></li>
-					<li><a href='/brand/lenovo/'><img src='/../wp-content/uploads/brand/lenovo.gif' alt='lenovo'></a></li>
-					<li><a href='/brand/gigabyte/'><img src='/../wp-content/uploads/brand/gigabyte.gif' alt='gigabyte'></a></li>
-					<li><a href='/brand/oppo/'><img src='/../wp-content/uploads/brand/oppo.gif' alt='oppo'></a></li>
-					<li><a href='/brand/celkon/'><img src='/../wp-content/uploads/brand/celkon.gif' alt='celkon'></a></li>
-					<li><a href='/brand/casio/'><img src='/../wp-content/uploads/brand/casio.gif' alt='casio'></a></li>
-					<li><a href='/brand/pantech/'><img src='/../wp-content/uploads/brand/pantech.gif' alt='pantech'></a></li>
-					<li><a href='/brand/maxwest/'><img src='/../wp-content/uploads/brand/maxwest.gif' alt='maxwest'></a></li>
-					<li><a href='/brand/micromax/'><img src='/../wp-content/uploads/brand/micromax.gif' alt='micromax'></a></li>
-					<li><a href='/brand/huawei/'><img src='/../wp-content/uploads/brand/huawei.gif' alt='huawei'></a></li>
-					<li><a href='/brand/toshiba/'><img src='/../wp-content/uploads/brand/toshiba.gif' alt='toshiba'></a></li>
-					<li><a href='/brand/motorola/'><img src='/../wp-content/uploads/brand/motorola.gif' alt='motorola'></a></li>
-					<li><a href='/brand/zte/'><img src='/../wp-content/uploads/brand/zte.gif' alt='zte'></a></li>
-					<li><a href='/brand/spice/'><img src='/../wp-content/uploads/brand/spice.gif' alt='spice'></a></li>
+				<ul class=\"small-block-grid-2\">
+					<li><a href=\"//secretspecs.com/brand/htc/\" title=\"HTC\"><img src=\"/../wp-content/uploads/brand/htc.gif\" alt=\"htc\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/samsung/\" title=\"Samsung\"><img src=\"/../wp-content/uploads/brand/samsung.gif\" alt=\"samsung\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/lg/\" title=\"LG\"><img src=\"/../wp-content/uploads/brand/lg.gif\" alt=\"lg\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/xiaomi/\" title=\"Xiaomi\"><img src=\"/../wp-content/uploads/brand/xiaomi.gif\" alt=\"xiaomi\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/asus/\" title=\"Asus\"><img src=\"/../wp-content/uploads/brand/asus.gif\" alt=\"asus\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/sony/\" title=\"Sony\"><img src=\"/../wp-content/uploads/brand/sony.gif\" alt=\"sony\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/acer/\" title=\"Acer\"><img src=\"/../wp-content/uploads/brand/acer.gif\" alt=\"acer\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/lenovo/\" title=\"Lenovo\"><img src=\"/../wp-content/uploads/brand/lenovo.gif\" alt=\"lenovo\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/gigabyte/\" title=\"Gigabyte\"><img src=\"/../wp-content/uploads/brand/gigabyte.gif\" alt=\"gigabyte\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/oppo/\" title=\"Oppo\"><img src=\"/../wp-content/uploads/brand/oppo.gif\" alt=\"oppo\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/celkon/\" title=\"Celkon\"><img src=\"/../wp-content/uploads/brand/celkon.gif\" alt=\"celkon\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/casio/\" title=\"Casio\"><img src=\"/../wp-content/uploads/brand/casio.gif\" alt=\"casio\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/pantech/\" title=\"Pantech\"><img src=\"/../wp-content/uploads/brand/pantech.gif\" alt=\"pantech\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/maxwest/\" title=\"Maxwest\"><img src=\"/../wp-content/uploads/brand/maxwest.gif\" alt=\"maxwest\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/micromax/\" title=\"Micromax\"><img src=\"/../wp-content/uploads/brand/micromax.gif\" alt=\"micromax\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/huawei/\" title=\"Huawei\"><img src=\"/../wp-content/uploads/brand/huawei.gif\" alt=\"huawei\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/toshiba/\" title=\"Toshiba\"><img src=\"/../wp-content/uploads/brand/toshiba.gif\" alt=\"toshiba\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/motorola/\" title=\"Motorola\"><img src=\"/../wp-content/uploads/brand/motorola.gif\" alt=\"motorola\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/zte/\" title=\"ZTE\"><img src=\"/../wp-content/uploads/brand/zte.gif\" alt=\"zte\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/spice/\" title=\"Spice\"><img src=\"/../wp-content/uploads/brand/spice.gif\" alt=\"spice\"></a></li>
 				</ul>
 				</div></div></div>
 				<br />
@@ -935,29 +935,29 @@ class model_widget extends WP_Widget {
 		
 		if (($ss->action == 'model') && ($ss->brand) && ($ss->models_arr)) {
 			echo "
-				<div class='row'>
-				<div class='small-12 columns'>
-				<div class='panel'>
+				<div class=\"row\">
+				<div class=\"small-12 columns\">
+				<div class=\"panel\">
 				<h5>$ss->brand</h5>
 				<br />
 			";
 			if ($ss->model_count <= 10) {	// When there are not more than 10 models for this brand
 				foreach ($ss->models_arr as $model) {
-					echo "<a href='/model/$ss->brand/$model->model/'>$model->seo_model</a><br />";
+					echo "<a href=\"//secretspecs.com/model/$ss->brand/$model->model/\" title=\"$model->seo_model\">$model->seo_model</a><br />";
 				}
 			}
 			elseif ($ss->model_current < 5) {	// When the current model is within the first 5 in the list
 				for ($i = 0; $i < 10; $i++) {
 					$model = $ss->models_arr[$i]->model;
 					$seo_model = $ss->models_arr[$i]->seo_model;
-					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+					echo "<a href=\"//secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
 				}
 			}
 			elseif ((($ss->model_count) - $ss->model_current) < 5) {	// When the current model is within the last 5 in the list
 				for ($i = $ss->model_count - 10; $i < $ss->model_count; $i++) {
 					$model = $ss->models_arr[$i]->model;
 					$seo_model = $ss->models_arr[$i]->seo_model;
-					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+					echo "<a href=\"//secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
 				}
 			}
 			else {
@@ -965,13 +965,13 @@ class model_widget extends WP_Widget {
 				for ($i = $ss->model_current - 5; $i < $ss->model_current; $i++) {
 					$model = $ss->models_arr[$i]->model;
 					$seo_model = $ss->models_arr[$i]->seo_model;
-					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+					echo "<a href=\"secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
 				}
 				// Display 5 models after current
 				for ($i = $ss->model_current + 1; $i < $ss->model_current + 6; $i++) {
 					$model = $ss->models_arr[$i]->model;
 					$seo_model = $ss->models_arr[$i]->seo_model;
-					echo "<a href='/model/$ss->brand/$model/'>$seo_model</a><br />";
+					echo "<a href=\"//secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
 				}
 			}
 			/**
