@@ -28,7 +28,7 @@ function ss_seo_meta() {
 	foreach (array($keywords) as $keyword) {
 		$seo_keywords .= $keyword.', ';
 	}
-	$seo_keywords .= 'mobile, phone, cellphone, Samsung, Sony Ericsson, Motorola, Acer, Alcatel, Asus, Casio, Gigabyte, Huawei, HTC, LG, Oppo, Toshiba, Xiaomi, hardware, specifications, specs, information, info';
+	$seo_keywords .= 'Android';
 
 	$ss_seo = '
 <!-- ss SEO -->
@@ -79,7 +79,7 @@ function ss_seo_meta() {
 function ss_title($title) {
     global $ss;
 	if ( in_the_loop() && is_page() ) {
-		$title = $ss->seo_title;
+		$title = $ss->title;
 	}
 	return $title;
 }
@@ -134,7 +134,7 @@ function ss_seo_loader_init() {
 			$ss->model = $path[3];
 			
 			// Get the secret code
-			$ss->query2 = 'SELECT `seo_model` FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
+			$ss->query2 = 'SELECT `seo_model`, `system` FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
 			$ss->query = 'SELECT `brand`.`brand`, `secret`.`code`, `secret`.`remarks` FROM `secret` JOIN `brand` ON `secret`.`brandid` = `brand`.`brandid`;';
 			$ss->get_secret();
 		}
@@ -247,6 +247,7 @@ class SS {
 
 	public $action;
 	public $page;
+	public $title;
 	public $seo_title;
 	public $seo_desc;
 	public $seo_keywords;
@@ -297,15 +298,20 @@ class SS {
 	public function get_brand() {
 		global $wpdb;
 		$this->get_brand = $wpdb->get_results($this->query);
+		$this->seo_brand = $this->get_brand[0]->seo_brand;
 		
 		// Set page title and description
 		if ($this->get_brand[0]->modelid) {
-			$this->seo_title = $this->get_brand[0]->seo_brand;
-			$this->seo_desc = $this->get_brand[0]->seo_brand.' devices full specifications, in-depth hardware informations and secret codes.';
+			$this->title = $this->seo_brand;
+			$this->seo_title = $this->seo_brand." devices";
+			$this->seo_desc = $this->seo_brand.' devices full specifications, in-depth hardware informations and secret codes.';
+			$this->seo_keywords = $this->seo_brand.", Specifications, Secret Codes";
 		}
 		else {
-			$this->seo_title = 'Brand';
-			$this->seo_desc = 'Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.';
+			$this->title = "Brand";
+			$this->seo_title = "Listing of devices by Brand";
+			$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.";
+			$this->seo_keywords = "Samsung, Sony, HTC, Huawei, Xiaomi";
 		}
 	}
 
@@ -316,8 +322,10 @@ class SS {
 		$this->get_model = $wpdb->get_results($this->query);
 		
 		// Set page title and description
-		$this->seo_title = 'Model';
-		$this->seo_desc = 'Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.';
+		$this->title = "Model";
+		$this->seo_title = "Listing of devices by Model";
+		$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.";
+		$this->seo_keywords = "Samsung, Sony, HTC, Huawei, Xiaomi";
 	}
 
 	// SQL query for selected model
@@ -325,9 +333,13 @@ class SS {
 		global $wpdb;
 
 		$result = $wpdb->get_row($this->query, ARRAY_A);
-		$this->seo_title = $result['seo_model'];
-		$this->seo_desc = $result['seo_model'].' full specifications, in-depth hardware informations and secret codes.';
-		$this->system = $result['system'];
+		$this->system = $result['system'];									// To get these variables
+		$this->seo_model = $result['seo_model'];							// for seo_title, seo_desc
+		$this->build_id = $this->get_subfield($this->system, 'Build ID');	// and seo_keywords below
+		$this->title = $this->seo_model." - Specifications";
+		$this->seo_title = $this->seo_model." - ".$this->build_id." - Specifications";
+		$this->seo_desc = $this->seo_model.", ".$this->build_id.", Android With Full Specifications, In-Depth Hardware Informations Including System, Display, Processor, Memory, Back Camera, Graphic Modes, Sensors, Codecs, Features.";
+		$this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->build_id;
 		$this->display = $result["display"];
 		$this->processor = $result['processor'];
 		$this->memory = $result['memory'];
@@ -385,10 +397,15 @@ class SS {
 		
 		$this->get_model = $wpdb->get_row($this->query2);
 		$this->get_secret = $wpdb->get_results($this->query);
+		$this->seo_model = $this->get_model->seo_model;
+		$this->system = $this->get_model->system;
+		$this->build_id = $this->get_subfield($this->system, 'Build ID');
 		
 		// Set page title and description
-		$this->seo_title = $this->get_model->seo_model.' - Secret Code';
-		$this->seo_desc = 'Access hidden info on your '.$this->get_model->seo_model.' with these secret codes that hold a large amount of information about its hardware and software.';
+		$this->title = $this->seo_model." - Secret Codes";
+		$this->seo_title = $this->seo_model." - ".$this->build_id." - Secret Codes";
+		$this->seo_desc = $this->seo_model." - ".$this->build_id." software and hardward infomation including IMEI, Factory Reset, GPS Test, MAC Address, Debug, LCD Test, Audio Test, Sensor Test, Firmware Info";
+		$this->seo_keywords = $this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->build_id.", Secret Codes";
 	}
 	
 	// Function to get title for accordion tabs in model display
@@ -447,6 +464,19 @@ class SS {
 			$string .= '</div>';
 		}
 		return $string;
+	}
+	
+	// Function to search for a field in SQL database that is stored in json format
+	public function get_subfield($arr_field, $search_field) {
+		if ($arr_field) {
+			$ss_array = json_decode($arr_field, true);
+			foreach ($ss_array as $value) {
+				if ($value[0] == $search_field) {
+					$found_field = $value[1];
+					return $found_field;
+				}
+			}
+		}
 	}
 
 	// Function to print main page
@@ -619,14 +649,14 @@ class SS {
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
 			<div class=\"left\">
-			<a class=\"tiny button\" href=\"$this->button_prev\" title=\"$this->button_prevtitle\">Prev Model</a>
+			<a class=\"small button\" href=\"$this->button_prev\" title=\"$this->button_prevtitle\"><i class=\"fa fa-chevron-circle-left fa-lg\"></i>&nbsp; Prev</a>
 			</div>
 			<div class=\"right\">
-			<a class=\"tiny button\" href=\"$this->button_next\" title=\"$this->button_nexttitle\">Next Model</a>
+			<a class=\"small button\" href=\"$this->button_next\" title=\"$this->button_nexttitle\">Next &nbsp;<i class=\"fa fa-chevron-circle-right fa-lg\"></i></a>
 			</div>
 			</div></div>
 			<br>
-			<a class=\"button secondary\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_title\">Secret Codes for $this->seo_title</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">Secret Codes for $this->seo_model</a><br />
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
 		";
@@ -658,7 +688,7 @@ class SS {
 			}
 			else {
 				echo "
-			<div id=$tab[1] class=\"content\" role=\"tabpanel\">";
+				<div id=$tab[1] class=\"content\" role=\"tabpanel\">";
 			}
 			echo "$accordion</div></li>";
 		}
@@ -671,6 +701,7 @@ class SS {
 			<hr>
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">Specifications for $this->seo_model</a><br />
 			<div class=\"row\">
 		";
 		
