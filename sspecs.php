@@ -680,8 +680,8 @@ class SS {
 			if ($tab[1] == 'codecs') { $accordion = $this->get_modelspecs($ss_codecs, 6, 6, 4, 8); }
 			if ($tab[1] == 'features') { $accordion = $this->get_modelspecs($ss_features, 6, 6, 4, 8); }
 			echo "
-			<li class=\"accordion-navigation\">
-			<a href=$link role=\"tab\" aria-controls=$tab[1]>$tab[0]</a>
+				<li class=\"accordion-navigation\">
+				<a href=\"$link\" aria-controls=$tab[1]>$tab[0]</a>
 			";
 			if ($tab[1] == 'system') {
 				echo "<div id=$tab[1] class=\"content active\" role=\"tabpanel\">";
@@ -894,26 +894,26 @@ class brand_widget extends WP_Widget {
 				<h5>Popular Brands</h5>
 				<br />
 				<ul class=\"small-block-grid-2\">
-					<li><a href=\"//secretspecs.com/brand/htc/\" title=\"HTC\"><img src=\"/../wp-content/uploads/brand/htc.gif\" alt=\"htc\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/samsung/\" title=\"Samsung\"><img src=\"/../wp-content/uploads/brand/samsung.gif\" alt=\"samsung\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/lg/\" title=\"LG\"><img src=\"/../wp-content/uploads/brand/lg.gif\" alt=\"lg\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/xiaomi/\" title=\"Xiaomi\"><img src=\"/../wp-content/uploads/brand/xiaomi.gif\" alt=\"xiaomi\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/asus/\" title=\"Asus\"><img src=\"/../wp-content/uploads/brand/asus.gif\" alt=\"asus\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/sony/\" title=\"Sony\"><img src=\"/../wp-content/uploads/brand/sony.gif\" alt=\"sony\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/acer/\" title=\"Acer\"><img src=\"/../wp-content/uploads/brand/acer.gif\" alt=\"acer\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/lenovo/\" title=\"Lenovo\"><img src=\"/../wp-content/uploads/brand/lenovo.gif\" alt=\"lenovo\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/gigabyte/\" title=\"Gigabyte\"><img src=\"/../wp-content/uploads/brand/gigabyte.gif\" alt=\"gigabyte\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/oppo/\" title=\"Oppo\"><img src=\"/../wp-content/uploads/brand/oppo.gif\" alt=\"oppo\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/celkon/\" title=\"Celkon\"><img src=\"/../wp-content/uploads/brand/celkon.gif\" alt=\"celkon\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/casio/\" title=\"Casio\"><img src=\"/../wp-content/uploads/brand/casio.gif\" alt=\"casio\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/pantech/\" title=\"Pantech\"><img src=\"/../wp-content/uploads/brand/pantech.gif\" alt=\"pantech\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/maxwest/\" title=\"Maxwest\"><img src=\"/../wp-content/uploads/brand/maxwest.gif\" alt=\"maxwest\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/micromax/\" title=\"Micromax\"><img src=\"/../wp-content/uploads/brand/micromax.gif\" alt=\"micromax\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/huawei/\" title=\"Huawei\"><img src=\"/../wp-content/uploads/brand/huawei.gif\" alt=\"huawei\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/toshiba/\" title=\"Toshiba\"><img src=\"/../wp-content/uploads/brand/toshiba.gif\" alt=\"toshiba\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/motorola/\" title=\"Motorola\"><img src=\"/../wp-content/uploads/brand/motorola.gif\" alt=\"motorola\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/zte/\" title=\"ZTE\"><img src=\"/../wp-content/uploads/brand/zte.gif\" alt=\"zte\"></a></li>
-					<li><a href=\"//secretspecs.com/brand/spice/\" title=\"Spice\"><img src=\"/../wp-content/uploads/brand/spice.gif\" alt=\"spice\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/htc/\" title=\"HTC\"><img src=\"//secretspecs.com/wp-content/uploads/brand/htc.gif\" alt=\"htc\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/samsung/\" title=\"Samsung\"><img src=\"//secretspecs.com/wp-content/uploads/brand/samsung.gif\" alt=\"samsung\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/lg/\" title=\"LG\"><img src=\"//secretspecs.com/wp-content/uploads/brand/lg.gif\" alt=\"lg\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/xiaomi/\" title=\"Xiaomi\"><img src=\"//secretspecs.com/wp-content/uploads/brand/xiaomi.gif\" alt=\"xiaomi\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/asus/\" title=\"Asus\"><img src=\"//secretspecs.com/wp-content/uploads/brand/asus.gif\" alt=\"asus\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/sony/\" title=\"Sony\"><img src=\"//secretspecs.com/wp-content/uploads/brand/sony.gif\" alt=\"sony\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/acer/\" title=\"Acer\"><img src=\"//secretspecs.com/wp-content/uploads/brand/acer.gif\" alt=\"acer\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/lenovo/\" title=\"Lenovo\"><img src=\"//secretspecs.com/wp-content/uploads/brand/lenovo.gif\" alt=\"lenovo\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/gigabyte/\" title=\"Gigabyte\"><img src=\"//secretspecs.com/wp-content/uploads/brand/gigabyte.gif\" alt=\"gigabyte\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/oppo/\" title=\"Oppo\"><img src=\"//secretspecs.com/wp-content/uploads/brand/oppo.gif\" alt=\"oppo\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/celkon/\" title=\"Celkon\"><img src=\"//secretspecs.com/wp-content/uploads/brand/celkon.gif\" alt=\"celkon\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/casio/\" title=\"Casio\"><img src=\"//secretspecs.com/wp-content/uploads/brand/casio.gif\" alt=\"casio\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/pantech/\" title=\"Pantech\"><img src=\"//secretspecs.com/wp-content/uploads/brand/pantech.gif\" alt=\"pantech\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/maxwest/\" title=\"Maxwest\"><img src=\"//secretspecs.com/wp-content/uploads/brand/maxwest.gif\" alt=\"maxwest\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/micromax/\" title=\"Micromax\"><img src=\"//secretspecs.com/wp-content/uploads/brand/micromax.gif\" alt=\"micromax\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/huawei/\" title=\"Huawei\"><img src=\"//secretspecs.com/wp-content/uploads/brand/huawei.gif\" alt=\"huawei\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/toshiba/\" title=\"Toshiba\"><img src=\"//secretspecs.com/wp-content/uploads/brand/toshiba.gif\" alt=\"toshiba\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/motorola/\" title=\"Motorola\"><img src=\"//secretspecs.com/wp-content/uploads/brand/motorola.gif\" alt=\"motorola\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/zte/\" title=\"ZTE\"><img src=\"//secretspecs.com/wp-content/uploads/brand/zte.gif\" alt=\"zte\"></a></li>
+					<li><a href=\"//secretspecs.com/brand/spice/\" title=\"Spice\"><img src=\"//secretspecs.com/wp-content/uploads/brand/spice.gif\" alt=\"spice\"></a></li>
 				</ul>
 				</div></div></div>
 				<br />
