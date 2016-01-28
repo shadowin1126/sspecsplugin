@@ -177,7 +177,35 @@ function ss_seo_loader_init() {
 	}
 	// Main page
 	elseif (!$ss->action) {
-		$ss->query = 'SELECT `model`.`model`, `model`.`seo_model`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` ORDER BY RAND() LIMIT 20;';
+		$model_max = 3892;
+		for ($i=0;$i<20;$i++) {
+			$rand[$i] = rand(1,$model_max);
+		}
+		$ss->query = 'SELECT `model`.`model`, `model`.`seo_model`, `brand`.`brand`
+		FROM `model` JOIN `brand`
+		ON `model`.`brandid` = `brand`.`brandid`
+		WHERE `model`.`modelid` = "'.$rand[0].'"
+		OR `model`.`modelid` = "'.$rand[1].'"
+		OR `model`.`modelid` = "'.$rand[2].'"
+		OR `model`.`modelid` = "'.$rand[3].'"
+		OR `model`.`modelid` = "'.$rand[4].'"
+		OR `model`.`modelid` = "'.$rand[5].'"
+		OR `model`.`modelid` = "'.$rand[6].'"
+		OR `model`.`modelid` = "'.$rand[7].'"
+		OR `model`.`modelid` = "'.$rand[8].'"
+		OR `model`.`modelid` = "'.$rand[9].'"
+		OR `model`.`modelid` = "'.$rand[10].'"
+		OR `model`.`modelid` = "'.$rand[11].'"
+		OR `model`.`modelid` = "'.$rand[12].'"
+		OR `model`.`modelid` = "'.$rand[13].'"
+		OR `model`.`modelid` = "'.$rand[14].'"
+		OR `model`.`modelid` = "'.$rand[15].'"
+		OR `model`.`modelid` = "'.$rand[16].'"
+		OR `model`.`modelid` = "'.$rand[17].'"
+		OR `model`.`modelid` = "'.$rand[18].'"
+		OR `model`.`modelid` = "'.$rand[19].'"
+		LIMIT 20;';
+		//$ss->query = 'SELECT `model`.`model`, `model`.`seo_model`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` ORDER BY RAND() LIMIT 20;';
 		$ss->get_random();
 	}
 
@@ -891,7 +919,7 @@ class brand_widget extends WP_Widget {
 				<div class=\"row\">
 				<div class=\"small-12 columns\">
 				<div class=\"panel\">
-				<h5>Popular Brands</h5>
+				<h4>Popular Brands</h4>
 				<br />
 				<ul class=\"small-block-grid-2\">
 					<li><a href=\"//secretspecs.com/brand/htc/\" title=\"HTC\"><img src=\"//secretspecs.com/wp-content/uploads/brand/htc.gif\" alt=\"htc\"></a></li>
@@ -965,11 +993,12 @@ class model_widget extends WP_Widget {
 		global $ss;
 		
 		if (($ss->action == 'model') && ($ss->brand) && ($ss->models_arr)) {
+			$brand = ucwords($ss->brand);
 			echo "
 				<div class=\"row\">
 				<div class=\"small-12 columns\">
 				<div class=\"panel\">
-				<h5>$ss->brand</h5>
+				<h4>Other Models of $brand</h4>
 				<br />
 			";
 			if ($ss->model_count <= 10) {	// When there are not more than 10 models for this brand
@@ -996,7 +1025,7 @@ class model_widget extends WP_Widget {
 				for ($i = $ss->model_current - 5; $i < $ss->model_current; $i++) {
 					$model = $ss->models_arr[$i]->model;
 					$seo_model = $ss->models_arr[$i]->seo_model;
-					echo "<a href=\"secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
+					echo "<a href=\"//secretspecs.com/model/$ss->brand/$model/\" title=\"$seo_model\">$seo_model</a><br />";
 				}
 				// Display 5 models after current
 				for ($i = $ss->model_current + 1; $i < $ss->model_current + 6; $i++) {
