@@ -88,6 +88,7 @@ function ss_title($title) {
 
 
 function ss_seo_loader_init() {
+	global $wpdb;
 	global $ss;
 	$urlArr = parse_url(filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRIPPED));
 	$path = explode('/', $urlArr['path']);
@@ -97,18 +98,42 @@ function ss_seo_loader_init() {
 	if ($ss->action == 'brand') {
 	
 		// List all models of selected brand
-		if ($path[2]) {
+		if (($path[2]) && (!$path[3])) {
 			// Set the current brand
 			$ss->brand = $path[2];
 			// Get the current brand
 			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`modelid`, `model`.`seo_model`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` LIKE "'.$ss->brand.'";';
+			// SQL query for current brand
+			$ss->get_brand = $wpdb->get_results($ss->query);
+			// To check whether brand exists in database
+			$check_brand = false;
+			foreach ($ss->get_brand as $result) {
+				$brandcheck = $result->brand;
+				if (($brandcheck) && ($brandcheck == $ss->brand)) {
+					$check_brand = true;
+				}
+			}
+			// If doesn't exist then return
+			if (!$check_brand) {
+				header('Location: /brand/');
+				exit;
+			}
+			// Passed brand check and continue to load all models of selected brand
 			$ss->get_brand();
 
 		// List all brands
-		} else {
+		}
+		elseif (!$path[2]) {
 			$ss->page = 'allbrand';
 			$ss->query = 'SELECT `brand`.`seo_brand`, `brand`.`brand`, `model`.`model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
+			$ss->get_brand = $wpdb->get_results($ss->query);
+			
 			$ss->get_brand();
+		}
+		// Else return to brands main page
+		else {
+			header('Location: /brand/');
+			exit;
 		}
 		
 		// Replace Wordpress title / Seo ultimate title
@@ -125,22 +150,44 @@ function ss_seo_loader_init() {
 	elseif ($ss->action == 'model') {
 	
 		// List secret codes of selected model
-		if (($path[4]) && ($path[4] == 'secret-code')) {
+		if (($path[4]) && ($path[4] == 'secret-code') && (!$path[5])) {
 			$ss->page = 'secret';
 			
-			// Set the current brand
+			// Set the current brand and model
 			$ss->brand = $path[2];
-			
 			$ss->model = $path[3];
 			
 			// Get the secret code
-			$ss->query2 = 'SELECT `seo_model`, `system` FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
+			$ss->query2 = 'SELECT `model`.`model`, `seo_model`.`model`, `system`.`model`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
 			$ss->query = 'SELECT `brand`.`brand`, `secret`.`code`, `secret`.`remarks` FROM `secret` JOIN `brand` ON `secret`.`brandid` = `brand`.`brandid`;';
+			
+			// SQL query for current spec
+			$ss->get_secret = $wpdb->get_results($ss->query);
+			$ss->get_model = $wpdb->get_row($ss->query2);
+			/**
+			// To check whether model exists in database
+			$check_brand = false;
+			$check_model = false;
+			$brandcheck = $ss->get_model->brand;
+			$modelcheck = $ss->get_model->model;
+			if (($brandcheck) && ($brandcheck == $ss->brand)) {
+				$check_brand = true;
+			}
+			if (($modelcheck) && ($modelcheck == $ss->model)) {
+				$check_model = true;
+			}
+			// If doesn't exist then return
+			if ((!$check_brand) || (!$check_model)) {
+				header('Location: /model/');
+				exit;
+			}
+			**/
+			// Passed model check and continue to load secret codes of selected model
 			$ss->get_secret();
 		}
 		
 		// List specs of selected model
-		elseif ($path[2]) {
+		elseif (($path[2]) && (!$path[4])) {
 			
 			// Set the current brand (for prev and next button purposes)
 			$ss->brand = $path[2];
@@ -149,22 +196,41 @@ function ss_seo_loader_init() {
 			$ss->model = $path[3];
 
 			// Get the current spec
-			$ss->query = 'SELECT * FROM `model` WHERE `model` LIKE "'.$ss->model.'";';
+			$ss->query = 'SELECT * FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
+			
+			// SQL query for current spec
+			$ss->get_spec = $wpdb->get_row($ss->query, ARRAY_A);
+			// To check whether model exists in database
+			$check_brand = false;
+			$check_model = false;
+			$brandcheck = $ss->get_spec['brand'];
+			$modelcheck = $ss->get_spec['model'];
+			if (($brandcheck) && ($brandcheck == $ss->brand)) {
+				$check_brand = true;
+			}
+			if (($modelcheck) && ($modelcheck == $ss->model)) {
+				$check_model = true;
+			}
+			// If doesn't exist then return
+			if ((!$check_brand) || (!$check_model)) {
+				header('Location: /model/');
+				exit;
+			}
+			// Passed brand check and continue to load all models of selected brand
 			$ss->get_specs();
 		}
 		
 		// List all models
-		else {
+		elseif (!$path[2]) {
 			$ss->page = 'allmodel';
 			$ss->query = 'SELECT `brand`.`brand`, `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid`;';
 			$ss->get_model();
 		}
-
-
-
-
-
-
+		// Else return to models main page
+		else {
+			header('Location: /model/');
+			exit;
+		}
 
 		// Replace Wordpress title / Seo ultimate title
 		if (isset($GLOBALS['seo_ultimate'])) {
@@ -284,6 +350,7 @@ class SS {
 	public $brand;
 	public $get_brand;
 	public $get_model;
+	public $get_spec;
 	public $model;
 	public $modelid;
 	public $system;
@@ -300,6 +367,15 @@ class SS {
 	public $sensors;
 	public $codecs;
 	public $features;
+	public $field_system;			// 
+	public $field_display_reso;		// 
+	public $field_display_size;		//
+	public $field_processor;		// 
+	public $field_internal_storage;	// 
+	public $field_external_storage;	// variables for auto generated paragraphs
+	public $field_system_ram;		// in model specs page
+	public $field_backcamera_pixel;	//
+	public $field_frontcamera_pixel;//
 	public $models_arr;			// sql results for models widget and prev/next button in model page
 	public $model_count;		// model count for models widget and prev/next button in model page
 	public $model_current;		// current model for models widget and prev/next button in model page
@@ -325,7 +401,7 @@ class SS {
 	// SQL query for selected brand
 	public function get_brand() {
 		global $wpdb;
-		$this->get_brand = $wpdb->get_results($this->query);
+		// $this->get_brand = $wpdb->get_results($this->query);
 		$this->seo_brand = $this->get_brand[0]->seo_brand;
 		
 		// Set page title and description
@@ -360,14 +436,15 @@ class SS {
 	public function get_specs() {
 		global $wpdb;
 
-		$result = $wpdb->get_row($this->query, ARRAY_A);
-		$this->system = $result['system'];									// To get these variables
-		$this->seo_model = $result['seo_model'];							// for seo_title, seo_desc
-		$this->build_id = $this->get_subfield($this->system, 'Build ID');	// and seo_keywords below
+		
+		$result = $this->get_spec;
+		$this->system = $result['system'];										// To get these variables
+		$this->seo_model = $result['seo_model'];								// for seo_title, seo_desc
+		$this->field_build_id = $this->get_subfield($this->system, 'Build ID');	// and seo_keywords below
 		$this->title = $this->seo_model." - Specifications";
 		$this->seo_title = $this->seo_model." - ".$this->build_id." - Specifications";
 		$this->seo_desc = $this->seo_model.", ".$this->build_id.", Android With Full Specifications, In-Depth Hardware Informations Including System, Display, Processor, Memory, Back Camera, Graphic Modes, Sensors, Codecs, Features.";
-		$this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->build_id;
+		$this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id;
 		$this->display = $result["display"];
 		$this->processor = $result['processor'];
 		$this->memory = $result['memory'];
@@ -381,6 +458,15 @@ class SS {
 		$this->sensors = $result['sensors'];
 		$this->codecs = $result['codecs'];
 		$this->features = $result['features'];
+		$this->field_system = $this->get_subfield($this->system, 'Android Version');			// 
+		$this->field_display_reso = $this->get_subfield($this->display, 'Size');				// 
+		$this->field_display_size = $this->get_subfield($this->display, 'Physical Size');		//
+		$this->field_processor = $this->get_subfield($this->processor, 'Processor');			// To get these variables
+		$this->field_internal_storage = $this->get_subfield($this->memory, 'Internal Storage');	// for auto generated
+		$this->field_external_storage = $this->get_subfield($this->memory, 'External Storage');	// paragraph
+		$this->field_system_ram = $this->get_subfield($this->memory, 'System RAM');				//
+		$this->field_backcamera_pixel = $this->get_subfield($this->backcamera, 'subtitle');		//
+		$this->field_frontcamera_pixel = $this->get_subfield($this->frontcamera, 'subtitle');	//
 		
 		//to get current model number in the database
 		$this->models_arr = $wpdb->get_results( "SELECT `model`.`model`, `model`.`seo_model` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `brand`.`brand` = '$this->brand'" );
@@ -423,17 +509,17 @@ class SS {
 	public function get_secret() {
 		global $wpdb;
 		
-		$this->get_model = $wpdb->get_row($this->query2);
-		$this->get_secret = $wpdb->get_results($this->query);
+		//$this->get_model = $wpdb->get_row($this->query2);
+		//$this->get_secret = $wpdb->get_results($this->query);
 		$this->seo_model = $this->get_model->seo_model;
 		$this->system = $this->get_model->system;
-		$this->build_id = $this->get_subfield($this->system, 'Build ID');
+		$this->field_build_id = $this->get_subfield($this->system, 'Build ID');
 		
 		// Set page title and description
 		$this->title = $this->seo_model." - Secret Codes";
-		$this->seo_title = $this->seo_model." - ".$this->build_id." - Secret Codes";
-		$this->seo_desc = $this->seo_model." - ".$this->build_id." software and hardward infomation including IMEI, Factory Reset, GPS Test, MAC Address, Debug, LCD Test, Audio Test, Sensor Test, Firmware Info";
-		$this->seo_keywords = $this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->build_id.", Secret Codes";
+		$this->seo_title = $this->seo_model." - ".$this->field_build_id." - Secret Codes";
+		$this->seo_desc = $this->seo_model." - ".$this->field_build_id." software and hardward infomation including IMEI, Factory Reset, GPS Test, MAC Address, Debug, LCD Test, Audio Test, Sensor Test, Firmware Info";
+		$this->seo_keywords = $this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id.", Secret Codes";
 	}
 	
 	// Function to get title for accordion tabs in model display
@@ -683,8 +769,46 @@ class SS {
 			<a class=\"small button\" href=\"$this->button_next\" title=\"$this->button_nexttitle\">Next &nbsp;<i class=\"fa fa-chevron-circle-right fa-lg\"></i></a>
 			</div>
 			</div></div>
-			<br>
+			<br />
 			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">Secret Codes for $this->seo_model</a><br />
+		";
+		// Review - System, Processor, Display and Memory
+		echo "
+			<br />
+			<h2>Review of $this->seo_model</h2>
+			The $this->seo_model is runnning Android $this->field_system, comes with a $this->field_display_size touchscreen display with a resolution of $this->field_display_reso, and is powered by $this->field_processor.
+			The RAM measures at $this->field_system_ram. The $this->seo_model packs $this->field_internal_storage of internal storage
+		";
+		if (($this->field_external_storage) && ($this->field_external_storage != "")) {
+			echo " and supports expendable storage of up to $this->field_external_storage.";
+		} else {
+			echo ".";
+		}
+		// Review - Camera
+		// - If both front and back camera exist
+		if (($this->field_backcamera_pixel) && ($this->field_backcamera_pixel != "") && ($this->field_frontcamera_pixel) && ($this->field_frontcamera_pixel != "")) {
+			echo "
+				<br /><br />
+				It came with a $this->field_backcamera_pixel primary camera on the rear and a $this->field_frontcamera_pixel front shooter for selfies.
+			";
+		}
+		// - If only back camera exist
+		elseif (($this->field_backcamera_pixel) && ($this->field_backcamera_pixel != "")) {
+			echo "
+				<br /><br />
+				It came with a $this->field_backcamera_pixel camera on the rear.
+			";
+		}
+		// - If only front camera exist
+		elseif (($this->field_frontcamera_pixel) && ($this->field_frontcamera_pixel != "")) {
+			echo "
+				<br /><br />
+				It came with a $this->field_frontcamera_pixel front camera.
+			";
+		}
+		echo "
+			<br /><br />
+			<h2>Full Specifications of $this->seo_model</h2>
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
 		";
