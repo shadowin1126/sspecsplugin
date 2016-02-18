@@ -158,13 +158,13 @@ function ss_seo_loader_init() {
 			$ss->model = $path[3];
 			
 			// Get the secret code
-			$ss->query2 = 'SELECT `model`.`model`, `seo_model`.`model`, `system`.`model`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
 			$ss->query = 'SELECT `brand`.`brand`, `secret`.`code`, `secret`.`remarks` FROM `secret` JOIN `brand` ON `secret`.`brandid` = `brand`.`brandid`;';
+			$ss->query2 = 'SELECT `model`.`model`, `model`.`seo_model`, `model`.`system`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
 			
 			// SQL query for current spec
 			$ss->get_secret = $wpdb->get_results($ss->query);
 			$ss->get_model = $wpdb->get_row($ss->query2);
-			/**
+			
 			// To check whether model exists in database
 			$check_brand = false;
 			$check_model = false;
@@ -181,7 +181,7 @@ function ss_seo_loader_init() {
 				header('Location: /model/');
 				exit;
 			}
-			**/
+			
 			// Passed model check and continue to load secret codes of selected model
 			$ss->get_secret();
 		}
@@ -442,8 +442,8 @@ class SS {
 		$this->seo_model = $result['seo_model'];								// for seo_title, seo_desc
 		$this->field_build_id = $this->get_subfield($this->system, 'Build ID');	// and seo_keywords below
 		$this->title = $this->seo_model." - Specifications";
-		$this->seo_title = $this->seo_model." - ".$this->build_id." - Specifications";
-		$this->seo_desc = $this->seo_model.", ".$this->build_id.", Android With Full Specifications, In-Depth Hardware Informations Including System, Display, Processor, Memory, Back Camera, Graphic Modes, Sensors, Codecs, Features.";
+		$this->seo_title = $this->seo_model." - ".$this->field_build_id." - Specifications";
+		$this->seo_desc = $this->seo_model.", ".$this->field_build_id.", Android With Full Specifications, In-Depth Hardware Informations Including System, Display, Processor, Memory, Back Camera, Graphic Modes, Sensors, Codecs, Features.";
 		$this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id;
 		$this->display = $result["display"];
 		$this->processor = $result['processor'];
