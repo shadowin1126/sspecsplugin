@@ -33,7 +33,7 @@ function ss_seo_meta() {
 	$ss_seo = '
 <!-- ss SEO -->
 
-
+	<link rel="author" href="https://plus.google.com/u/0/105697456818218161068"/>
 	<link rel="canonical" href="https://'.$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"].'" />
 
 	<meta name="title" content="'.$seo_title.'" />
@@ -57,6 +57,8 @@ function ss_seo_meta() {
 	<meta property="fb:app_id" content="531406790246098"/>
 	<meta name="twitter:card" content="summary"/>
 	<meta name="twitter:description" content="'.$seo_desc.'" />
+	<meta name="twitter:site" content="@secret_specs"/>
+	<meta name="google-site-verification" content="7HwbOdRomrvwyGKJ-BfbtzNRpEVXsFLEQyK0LGpzBEU"/>
 	<meta name="yandex-verification" content="60dc371905b6f83a" />
 	';
 
@@ -161,7 +163,7 @@ function ss_seo_loader_init() {
 			$ss->query = 'SELECT `brand`.`brand`, `secret`.`code`, `secret`.`remarks` FROM `secret` JOIN `brand` ON `secret`.`brandid` = `brand`.`brandid`;';
 			$ss->query2 = 'SELECT `model`.`model`, `model`.`seo_model`, `model`.`system`, `brand`.`brand` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
 			
-			// SQL query for current spec
+			// SQL query for secret code
 			$ss->get_secret = $wpdb->get_results($ss->query);
 			$ss->get_model = $wpdb->get_row($ss->query2);
 			
@@ -185,6 +187,42 @@ function ss_seo_loader_init() {
 			// Passed model check and continue to load secret codes of selected model
 			$ss->get_secret();
 		}
+		
+		// Show firmware of selected model
+		elseif (($path[4]) && ($path[4] == 'firmware') && (!$path[5])) {
+			$ss->page = 'firmware';
+			
+			// Set the current brand and model
+			$ss->brand = $path[2];
+			$ss->model = $path[3];
+			
+			// Get the firmware
+			$ss->query = 'SELECT `model`.`model`, `model`.`seo_model`, `model`.`system`, `brand`.`brand`, `brand`.`url` FROM `model` JOIN `brand` ON `model`.`brandid` = `brand`.`brandid` WHERE `model` LIKE "'.$ss->model.'";';
+			
+			// SQL query for firmware
+			$ss->get_firmware = $wpdb->get_row($ss->query);
+			
+			// To check whether model exists in database
+			$check_brand = false;
+			$check_model = false;
+			$brandcheck = $ss->get_firmware->brand;
+			$modelcheck = $ss->get_firmware->model;
+			if (($brandcheck) && ($brandcheck == $ss->brand)) {
+				$check_brand = true;
+			}
+			if (($modelcheck) && ($modelcheck == $ss->model)) {
+				$check_model = true;
+			}
+			// If doesn't exist then return
+			if ((!$check_brand) || (!$check_model)) {
+				header('Location: /model/');
+				exit;
+			}
+			
+			// Passed model check and continue to load firmware of selected model
+			$ss->get_firmware();
+		}
+		
 		
 		// List specs of selected model
 		elseif (($path[2]) && (!$path[4])) {
@@ -243,6 +281,8 @@ function ss_seo_loader_init() {
 	}
 	// Main page
 	elseif (!$ss->action) {
+		// require('wp-blog-header.php');
+
 		$model_max = 3892;
 		for ($i=0;$i<20;$i++) {
 			$rand[$i] = rand(1,$model_max);
@@ -309,6 +349,9 @@ function ss_func() {
 		if ($ss->page == 'secret') {
 			$ss->print_secret();
 		}
+		elseif ($ss->page == 'firmware') {
+			$ss->print_firmware();
+		}
 		elseif ($ss->page == 'allmodel') {
 			$ss->print_model();
 		} else {
@@ -351,8 +394,11 @@ class SS {
 	public $get_brand;
 	public $get_model;
 	public $get_spec;
+	public $get_secret;
+	public $get_firmware;
 	public $model;
 	public $modelid;
+	public $url;
 	public $system;
 	public $display;
 	public $processor;
@@ -414,7 +460,7 @@ class SS {
 		else {
 			$this->title = "Brand";
 			$this->seo_title = "Listing of devices by Brand";
-			$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.";
+			$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes. Listing all mobile device brands.";
 			$this->seo_keywords = "Samsung, Sony, HTC, Huawei, Xiaomi";
 		}
 	}
@@ -428,7 +474,7 @@ class SS {
 		// Set page title and description
 		$this->title = "Model";
 		$this->seo_title = "Listing of devices by Model";
-		$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes.";
+		$this->seo_desc = "Secret Specs is the ultimate website for phone and mobile device full specifications, in-depth hardware informations and secret codes. Listing all device models.";
 		$this->seo_keywords = "Samsung, Sony, HTC, Huawei, Xiaomi";
 	}
 
@@ -442,7 +488,7 @@ class SS {
 		$this->seo_model = $result['seo_model'];								// for seo_title, seo_desc
 		$this->field_build_id = $this->get_subfield($this->system, 'Build ID');	// and seo_keywords below
 		$this->title = $this->seo_model." - Specifications";
-		$this->seo_title = $this->seo_model." - ".$this->field_build_id." - Specifications";
+		$this->seo_title = $this->seo_model." | ".$this->field_build_id." | Specifications";
 		$this->seo_desc = $this->seo_model.", ".$this->field_build_id.", Android With Full Specifications, In-Depth Hardware Informations Including System, Display, Processor, Memory, Back Camera, Graphic Modes, Sensors, Codecs, Features.";
 		$this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id;
 		$this->display = $result["display"];
@@ -517,9 +563,25 @@ class SS {
 		
 		// Set page title and description
 		$this->title = $this->seo_model." - Secret Codes";
-		$this->seo_title = $this->seo_model." - ".$this->field_build_id." - Secret Codes";
+		$this->seo_title = $this->seo_model." | ".$this->field_build_id." | Secret Codes";
 		$this->seo_desc = $this->seo_model." - ".$this->field_build_id." software and hardward infomation including IMEI, Factory Reset, GPS Test, MAC Address, Debug, LCD Test, Audio Test, Sensor Test, Firmware Info";
 		$this->seo_keywords = $this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id.", Secret Codes";
+	}
+	
+	// SQL query for firmware
+	public function get_firmware() {
+		global $wpdb;
+		
+		$this->seo_model = $this->get_firmware->seo_model;
+		$this->url = $this->get_firmware->url;
+		$this->system = $this->get_firmware->system;
+		$this->field_build_id = $this->get_subfield($this->system, 'Build ID');
+		
+		// Set page title and description
+		$this->title = $this->seo_model." - Latest Firmware";
+		$this->seo_title = $this->seo_model." | ".$this->field_build_id." | Latest Firmware";
+		$this->seo_desc = "Download the latest drivers, manuals, firmware and software for your ".$this->seo_model." - ".$this->field_build_id;
+		$this->seo_keywords = $this->seo_keywords = ucwords($this->brand).", ".$this->seo_model.", ".$this->field_build_id.", Firmware";
 	}
 	
 	// Function to get title for accordion tabs in model display
@@ -620,6 +682,18 @@ class SS {
 			</div>
 		</div>
 		";
+		**/
+		/**
+		$args = array( 'numberposts' => 6, 'post_status'=>"publish",'post_type'=>"post",'orderby'=>"post_date");
+		$postslist = get_posts( $args );
+		echo '<ul id="latest_posts">';
+		foreach ($postslist as $post) :  setup_postdata($post); ?> 
+			<li><strong><?php the_date(); ?></strong><br />
+			<a href="<?php the_permalink(); ?>" title="<?php the_title();?>"> <?php the_title(); ?></a>
+			</li>
+		<?php endforeach; ?>
+		 </ul>
+		 <?php
 		**/
 		echo '
 			<div class="row">
@@ -770,7 +844,8 @@ class SS {
 			</div>
 			</div></div>
 			<br />
-			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">Secret Codes for $this->seo_model</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">$this->seo_model Secret Codes</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/firmware/\" title=\"Firmware for $this->seo_model\">$this->seo_model Firmware</a><br />
 		";
 		// Review - System, Processor, Display and Memory
 		echo "
@@ -853,14 +928,15 @@ class SS {
 			<hr>
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
-			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">Specifications for $this->seo_model</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">$this->seo_model Full Specifications</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/firmware/\" title=\"Firmware for $this->seo_model\">$this->seo_model Firmware</a><br />
 			<div class=\"row\">
 		";
 		
 		// List all generic secret codes
 		echo "
 			<div class=\"small-12 columns\">
-			<h3>Generic Secret Codes</h3>
+			<h2>Generic Secret Codes</h2>
 			</div>
 		";
 		$checkbrand = "";
@@ -883,7 +959,7 @@ class SS {
 			echo "
 				<br />
 				<div class=\"small-12 columns\">
-				<h3>$brand Secret Codes</h3>
+				<h2>$brand Secret Codes</h2>
 				</div>
 			";
 			foreach ($this->get_secret as $secret) {
@@ -897,6 +973,30 @@ class SS {
 			}
 		}
 		echo "</div></div></div>";
+	}
+	
+	public function print_firmware() {
+		echo "
+			<hr>
+			<div class=\"small-12 coulmns\">
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">$this->seo_model Full Specifications</a><br />
+			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">$this->seo_model Secret Codes</a><br />
+			<div class=\"row\">
+		";
+		
+		// Display firmware
+		echo "
+			<div class=\"small-12 columns\">
+				<h2>Firmware for $this->seo_model</h2>
+			</div>
+			<div class=\"small-12 columns\">
+				<ul>
+				<li><a href=\"$this->url\" title=\"$this->seo_model\" target=\"_blank\">Latest $this->seo_model firmware</a></li>
+				</ul>
+			</div>
+		";
+
+		echo "</div></div>";
 	}
 
 	function flatten_array($arr) {
