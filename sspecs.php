@@ -324,16 +324,12 @@ function ss_func() {
 	<!-- Ads -->
 	<div class="row">
 		<div class="small-12 columns">
-			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-			<!-- secretspecs-top -->
-			<ins class="adsbygoogle"
-				 style="display:block"
-				 data-ad-client="ca-pub-0047723350429793"
-				 data-ad-slot="7551038658"
-				 data-ad-format="auto"></ins>
-			<script>
-			(adsbygoogle = window.adsbygoogle || []).push({});
+			<!-- /6880916/Secret-Top-728-300 -->
+			<div id='ad-top'>
+			<script type='text/javascript'>
+			googletag.cmd.push(function() { googletag.display('ad-top'); });
 			</script>
+			</div>
 		</div>
 	</div>
 	<br />
@@ -364,16 +360,12 @@ function ss_func() {
 	<br />
 	<div class="row">
 		<div class="small-12 columns">
-			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-			<!-- secretspecs-bottom -->
-			<ins class="adsbygoogle"
-				 style="display:block"
-				 data-ad-client="ca-pub-0047723350429793"
-				 data-ad-slot="1504505059"
-				 data-ad-format="auto"></ins>
-			<script>
-			(adsbygoogle = window.adsbygoogle || []).push({});
+			<!-- /6880916/Secret-Bottom-728-300 -->
+			<div id='ad-bottom'>
+			<script type='text/javascript'>
+			googletag.cmd.push(function() { googletag.display('ad-bottom'); });
 			</script>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -756,7 +748,24 @@ class SS {
 		$current_seobrand = $this->get_brand[0]->seo_brand;
 		$array_count = COUNT($this->get_brand);	// To check for last
 		$i = 0;									// item in array
+		$countAD = 0;
+		$doneAD = false;
 		foreach ($this->get_brand as $brand) {
+			// Ads
+			if (($countAD == 20) && (!$doneAD)) {
+				?>
+				<div class="small-12 columns">
+				<!-- /6880916/Secret-After-728-300 -->
+				<div id='ad-after'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('ad-after'); });
+				</script>
+				</div>
+				<br />
+				</div>
+				<?php
+				$doneAD = true;
+			}
 			// List all brand
 			if ($this->page == 'allbrand') {
 				$i++;
@@ -767,6 +776,7 @@ class SS {
 						echo "</div>";
 						$dup_brand = $brand->brand;
 						$current_count = 1;
+						$countAD++;		// increase count for Ads
 					} else {
 						$current_count++;
 					}
@@ -778,6 +788,7 @@ class SS {
 						echo "<a href=\"//secretspecs.com/brand/$current_brand/\" title=\"$current_seobrand\">$current_seobrand ($current_count)</a>";
 						echo "</div>";
 						$current_count = 1;
+						$countAD++;		// increase count for Ads
 					}
 					echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">";
 					echo "<a href=\"//secretspecs.com/brand/$brand->brand/\" title=\"$brand->seo_brand\">$brand->seo_brand ($current_count)</a>";
@@ -790,6 +801,7 @@ class SS {
 				else { echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">"; }
 				echo "<a href=\"//secretspecs.com/model/$brand->brand/$brand->model/\" title=\"$brand->seo_model\">$brand->seo_model</a>";
 				echo "</div>";
+				$countAD++;		// increase count for Ads
 			}
 		}
 		echo "</div></div></div>";
@@ -804,13 +816,29 @@ class SS {
 		";
 		$array_count = COUNT($this->get_model);	// To check for last
 		$i = 0;									// item in array
+		$countAD = 0;
 		foreach ($this->get_model as $model) {
+			// Ads
+			if ($countAD == 20) {
+				?>
+				<div class="small-12 columns">
+				<!-- /6880916/Secret-After-728-300 -->
+				<div id='ad-after'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('ad-after'); });
+				</script>
+				</div>
+				<br />
+				</div>
+				<?php
+			}
 			// List all models
 			$i++;
 			if ($i < $array_count) { echo "<div class=\"small-12 medium-6 columns\" style=\"height:25pt\">"; }
 			else { echo "<div class=\"small-12 medium-6 columns end\" style=\"height:25pt\">"; }
 			echo "<a href=\"//secretspecs.com/model/$model->brand/$model->model/\" title=\"$model->seo_model\">$model->seo_model</a>";
 			echo "</div>";
+			$countAD++;
 		}
 		echo "</div></div></div>";
 	}
@@ -881,8 +909,19 @@ class SS {
 				It came with a $this->field_frontcamera_pixel front camera.
 			";
 		}
+		// Ads
 		echo "
-			<br /><br />
+		<br /><br />
+		<!-- /6880916/Secret-After-728-300 -->
+		<div id='ad-after'>
+		<script type='text/javascript'>
+		googletag.cmd.push(function() { googletag.display('ad-after'); });
+		</script>
+		</div>
+		";
+		
+		echo "
+			<br />
 			<h2>Full Specifications of $this->seo_model</h2>
 			<div class=\"row\">
 			<div class=\"small-12 columns\">
@@ -930,11 +969,27 @@ class SS {
 			<div class=\"small-12 columns\">
 			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">$this->seo_model Full Specifications</a><br />
 			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/firmware/\" title=\"Firmware for $this->seo_model\">$this->seo_model Firmware</a><br />
-			<div class=\"row\">
+		";
+		
+		// Ads
+		echo "
+		<br />
+		<div class=\"row\">
+		<div class=\"small-12 columns\">
+		<!-- /6880916/Secret-After-728-300 -->
+		<div id='ad-after'>
+		<script type='text/javascript'>
+		googletag.cmd.push(function() { googletag.display('ad-after'); });
+		</script>
+		</div>
+		</div>
+		</div>
+		<br />
 		";
 		
 		// List all generic secret codes
 		echo "
+			<div class=\"row\">
 			<div class=\"small-12 columns\">
 			<h2>Generic Secret Codes</h2>
 			</div>
@@ -981,11 +1036,27 @@ class SS {
 			<div class=\"small-12 coulmns\">
 			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/\" title=\"Specifications for $this->seo_model\">$this->seo_model Full Specifications</a><br />
 			<a class=\"button\" href=\"//secretspecs.com/model/$this->brand/$this->model/secret-code/\" title=\"Secret Codes for $this->seo_model\">$this->seo_model Secret Codes</a><br />
-			<div class=\"row\">
+		";
+		
+		// Ads
+		echo "
+		<br />
+		<div class=\"row\">
+		<div class=\"small-12 columns\">
+		<!-- /6880916/Secret-After-728-300 -->
+		<div id='ad-after'>
+		<script type='text/javascript'>
+		googletag.cmd.push(function() { googletag.display('ad-after'); });
+		</script>
+		</div>
+		</div>
+		</div>
+		<br />
 		";
 		
 		// Display firmware
 		echo "
+			<div class=\"row\">
 			<div class=\"small-12 columns\">
 				<h2>Firmware for $this->seo_model</h2>
 			</div>
